@@ -1,0 +1,12 @@
+Dependencies:
+	cmake 3.17, gcc ( you need to have admin [sudo] rights to do this; non-sudo installation coming soon....)
+	CCMpred (dependent on cmake 3.17, gcc)
+	HH-BLITS
+
+Installation instructions:
+
+Download the code from github using the command:
+
+	git clone git@github.com:alepandini/DyNoPy.git
+	cd DyNoPy
+	bash dynopy_installer_00.sh

@@ -24,13 +24,17 @@ This package will help you extract:
 - **Dependency files**
     - [ ] mdp files
     - [ ] R scripts
-#### git cheat sheet
+#### GitHub cheat sheet
+Some tips and tricks of GitHub
+
 ##### Configure git 
 ```
 git config --global user.name "Name"
 git config --global user.email "email id"
 git config --global core.editor "vim"
-
+```
+#### Setting up the project 
+```
 mkdir DyNoPy
 cd DyNoPy/
 git init
@@ -39,7 +43,8 @@ git remote add DyNoPy git@github.com:alepandini/DyNoPy.git
 git remote -v
 git pull DyNoPy master
 ```
-##### add+commit+git
+
+##### add+commit+push
 ```
 cd DyNoPy && git add . && git commit && git push DyNoPy master
 ```
