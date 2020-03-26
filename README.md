@@ -1,8 +1,8 @@
 # DyNoPy (Dynamics based Network cOmparisons in Python)
-#### **What does it do?**
+#### **What does it do?**:
 This package will help you extract:
-	1. Coevolution matrix from a FASTA sequence
-	2. Extract pairwise non-bonded interaction energies from MD trajectories 
+1. Coevolution matrix from a FASTA sequence
+2. Extract pairwise non-bonded interaction energies from MD trajectories 
 3. Identify residue pairs significant for functional motion
 4. Identify communities of residues in a network and rank them 
 5. Compare networks (how to treat deletions??)
