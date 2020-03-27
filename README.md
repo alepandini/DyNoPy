@@ -1,5 +1,5 @@
 # DyNoPy (Dynamics based Network cOmparisons in Python)
-## **What does it do?**:
+## **What does it do?**
 This package will help you extract:
 1. Coevolution matrix from a FASTA sequence
 2. Extract pairwise non-bonded interaction energies from MD trajectories 
@@ -7,29 +7,41 @@ This package will help you extract:
 4. Identify communities of residues in a network and rank them 
 5. Compare networks (how to treat deletions??)
 
-#### **Requirements**:
+#### **Requirements**
 	- Python3.6, numpy 1.15, matplotlib
 	- R & igraph
         - ambertools18
         - hh-suite
 	- CCMpred
 	
-## **Installation instructions**:
+## **Installation instructions**
 
 Download the code to your favourite directory
-
 ```
 cd /home/username/myfavdir
 git clone git@github.com:alepandini/DyNoPy.git
 ```
 
-### For ubuntu to figure out where DyNoPy executables are
+This is to make your life easy. Add the following lines to your:
+```
+vim .bashrc
+```
+on macOS
+```
+vim .bash_profile 
+```
+
+For ubuntu to figure out where DyNoPy executables are
 ```
 export DYNOPY="/home/username/myfavdir/DyNoPy"
 export PATH=$PATH:$DYNOPY/bin
-#for python to figure out where DyNoPy python code is
+```
+
+for python to figure out where DyNoPy python code is
+```
 export PYTHONPATH=$PATH:$DYNOPY/bin
 ```
+
 
 ## **Developer area**:
 
