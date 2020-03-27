@@ -26,10 +26,6 @@ This is to make your life easy. Add the following lines to your:
 ```
 vim .bashrc
 ```
-on macOS
-```
-vim .bash_profile 
-```
 
 For ubuntu to figure out where DyNoPy executables are
 ```
@@ -41,11 +37,28 @@ for python to figure out where DyNoPy python code is
 ```
 export PYTHONPATH=$PATH:$DYNOPY/bin
 ```
+.bashrc settings for dependcy softwares. If this part is not done, SCRIPT.py and SCRIPT.py will complain alot
+
+HHBLITS
+```
+export PATH=$PATH:
+```
+CCMPred
+```
+export CCMPRED_HOME="/home/username/myfavdir/CCMpred"
+export PATH="$PATH:$CCMPRED_HOME/build/bin"
+export PATH="$PATH:$CCMPRED_HOME/scripts"
+```
+After you download and install ambertools 
+```
+export AMBERHOME="/home/username/myfavdir/amber/amber18"
+export PATH="$PATH:$AMBERHOME/bin"
+```
 
 
-## **Developer area**:
+##**Developer area**
 
-#### **Progress**:
+###**Progress**
 	- Convert tools to wrappers for class calls
 	- Clean up the code
 - **Co-evolution analysis**
@@ -57,7 +70,7 @@ export PYTHONPATH=$PATH:$DYNOPY/bin
 - **Dependency files**
     - [ ] mdp files
     - [ ] R scripts
-#### GitHub cheat sheet
+### GitHub cheat sheet
 Some tips and tricks of GitHub
 
 ##### Configure git 
