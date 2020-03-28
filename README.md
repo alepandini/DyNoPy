@@ -37,11 +37,12 @@ for python to figure out where DyNoPy python code is
 ```
 export PYTHONPATH=$PATH:$DYNOPY/bin
 ```
-.bashrc settings for dependcy softwares. If this part is not done, SCRIPT.py and SCRIPT.py will complain alot
+.bashrc settings for dependcy softwares. If these variables are not set, `dyno_coevolution.py` will complain alot
 
 HHBLITS
 ```
-export PATH=$PATH:
+export HHLIB="/home/username/myfavdir/hh-suite"
+export PATH="$PATH:$HHLIB/build/bin"
 ```
 CCMPred
 ```
