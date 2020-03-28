@@ -32,10 +32,13 @@ For ubuntu to figure out where DyNoPy executables are
 export DYNOPY="/home/username/myfavdir/DyNoPy"
 export PATH=$PATH:$DYNOPY/bin
 ```
-
 for python to figure out where DyNoPy python code is
 ```
 export PYTHONPATH=$PATH:$DYNOPY/bin
+```
+... in your favourite dir i.e. `/home/username/myfavdir` run the following command to install cmake, hh-suite, and CCMpred
+```
+dynopy_installer_00.sh
 ```
 .bashrc settings for dependcy softwares. If these variables are not set, `dyno_coevolution.py` will complain alot
 
