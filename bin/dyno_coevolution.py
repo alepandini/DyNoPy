@@ -37,10 +37,10 @@ file_aln="";	path_hhdb=""; pdbID="";
 
 dict_hhv={};
 
-def run_hhblits(num_threads=4):
+def run_hhblits():
     global perf_out
     start = timeit.default_timer()
-    fasta="%s.fasta"%(pdbID);	hhr="%s-%d.hhr"%(pdbID,num_threads);	a3m="%s-%d.a3m"%(pdbID,num_threads)
+    fasta="%s.fasta"%(pdbID);	hhr="%s-%d.hhr"%(pdbID,nthreads);	a3m="%s-%d.a3m"%(pdbID,nthreads)
     oa3m="%s.a3m"%(pdbID);
     ### check if fasta file is present
     fileIO.check_file(fasta);
@@ -49,7 +49,7 @@ def run_hhblits(num_threads=4):
     #hh_database="%s/%s/%s"%(hhpath,dbname,dbname)
     ### run hhblits
     print('Running hhblits on : %s'%(fasta))
-    hh_com="%s -B 100000 -v 2 -n 4 -cpu %d -neffmax 20 -nodiff -maxfilt 100000 -d %s -i %s -o %s -oa3m %s"%(dict_hhv['hhblits'],num_threads,dict_hhv['hhdb'],fasta,hhr,a3m)
+    hh_com="%s -B 100000 -v 2 -n 4 -cpu %d -neffmax 20 -nodiff -maxfilt 100000 -d %s -i %s -o %s -oa3m %s"%(dict_hhv['hhblits'],nthreads,dict_hhv['hhdb'],fasta,hhr,a3m)
     os.system(hh_com)
     fileIO.check_file(a3m,'hhblits run might have failed...')
 
@@ -66,7 +66,7 @@ def run_hhblits(num_threads=4):
     stop = timeit.default_timer()
     perf_out+="%-15s : %12.2f(s) ; (N_THREADS=%4d)\n"%("HHBLITS",stop-start,num_threads);
 
-def run_ccmpred_gpu(num_threads=0):
+def run_ccmpred_gpu():
     global perf_out
     start = timeit.default_timer()
     print ("Running CCMPRED on %s .........."%(pdbID))
@@ -83,7 +83,7 @@ def checkmaxthreads():
         nthreads=round(threads_max*0.8)
     
 def main():
-    global file_aln,file_ccm,pdbID
+    global file_aln,file_ccm,pdbID,nthreads
     args    =   argParser.opts_coevolution();
     pdbID   =   args.pdbid
     hhdb    =   args.database
@@ -99,9 +99,9 @@ def main():
     file_ccm="%s.mat"%(pdbID);
     
     #run hhblits+tools
-    run_hhblits(num_threads=nthreads)
+    run_hhblits()
     #run CCMpred
-    run_ccmpred_gpu(num_threads=nthreads)
+    run_ccmpred_gpu()
     
     print (perf_out)
 

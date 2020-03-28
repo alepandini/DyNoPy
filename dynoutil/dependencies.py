@@ -31,7 +31,7 @@ def check_exe(exe_for_search):
         print('EXE_NOT_FOUND %s'%(exe_for_search))
         exit()
     else:
-        print('EXE_FOUND @ %s'%(exloc))
+        print('EXE_FOUND     @ %s'%(exloc))
     #rc=subprocess.getoutput("which %s"%(exe_for_search))
 def check_hhblits(dbname):
     hhlib   =   os.getenv("HHLIB")
@@ -53,7 +53,7 @@ def check_hhblits(dbname):
     '''
         add a more thorough check of the database folder
     '''
-    file_hhdb="%s/database/%s_a3m.ffdata"%(hhlib,dbname)
+    file_hhdb="%s/database/%s/%s_a3m.ffdata"%(hhlib,dbname,dbname)
     fileIO.check_file(file_hhdb,cue_message=dbname+" files not found. Download the files again.")
     dict_hhv['hhdb']="%s/database/%s"%(hhlib,dbname)
     return dict_hhv
