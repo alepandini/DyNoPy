@@ -28,6 +28,7 @@ def opts_coevolution():
     parser = argp.ArgumentParser()
     parser.add_argument("-i", "--pdbid",help="pdbID; NOTE: expects pdbID.fasta file in the directory")
     parser.add_argument("-d", "--database",default="UniRef30_2020_02",help="uniprot database ; Supports only UniRef30_2020_02")
+    parser.add_argument("-n", "--numthreads",default=1,help="number of threads to use")
     args = parser.parse_args()
     if(args.pdbid==None):
         print('Provide pdbid. Exiting')

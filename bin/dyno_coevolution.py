@@ -31,6 +31,7 @@ import dynoIO.options as argParser
 perf_out="Performance stats...\n";
 
 file_aln="";	path_hhdb=""; pdbID="";
+dict_hhv={};
 
 def run_hhblits(num_threads=4):
     global perf_out
@@ -44,7 +45,7 @@ def run_hhblits(num_threads=4):
     #hh_database="%s/%s/%s"%(hhpath,dbname,dbname)
     ### run hhblits
     print('Running hhblits on : %s'%(fasta))
-    hh_com="hhblits -B 100000 -v 2 -n 4 -cpu %d -neffmax 20 -nodiff -maxfilt 100000 -d %s -i %s -o %s -oa3m %s"%(num_threads,path_hhdb,fasta,hhr,a3m)
+    hh_com="%s -B 100000 -v 2 -n 4 -cpu %d -neffmax 20 -nodiff -maxfilt 100000 -d %s -i %s -o %s -oa3m %s"%(dict_hhv['hhblits'],num_threads,dict_hhv['hhdb'],fasta,hhr,a3m)
     os.system(hh_com)
     fileIO.check_file(a3m,'hhblits run might have failed...')
 
@@ -61,7 +62,7 @@ def run_hhblits(num_threads=4):
     stop = timeit.default_timer()
     perf_out+="%-15s : %12.2f(s) ; (N_THREADS=%4d)\n"%("HHBLITS",stop-start,num_threads);
 
-def run_ccmpred_gpu(ccm_file,num_threads=0):
+def run_ccmpred_gpu(num_threads=0):
     global perf_out
     start = timeit.default_timer()
     print ("Running CCMPRED on %s .........."%(pdbID))
@@ -77,18 +78,18 @@ def main():
     args    =   argParser.opts_coevolution();
     pdbID   =   args.pdbid
     hhdb    =   args.database
-    
+    nthreads=   args.numthreads
     #check if hhblits and database are installed
-    dependency.check_hhblits(hhdb);
+    dict_hhv=dependency.check_hhblits(hhdb);
 
     # to control output file names
     file_aln="%s.aln"%(pdbID);
     file_ccm="%s.mat"%(pdbID);
     
     #run hhblits+tools
-    run_hhblits(num_threads=24)
+    run_hhblits(num_threads=nthreads)
     #run CCMpred
-    run_ccmpred_gpu(num_threads=1)
+    run_ccmpred_gpu(num_threads=nthreads)
     
     print (perf_out)
 

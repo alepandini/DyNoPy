@@ -43,9 +43,11 @@ def check_hhblits(dbname):
         exit()
     fileIO.check_exe(dict_hhv['hhblits'])
     fileIO.check_exe(dict_hhv['hhfilter'])
+    fileIO.check_exe("ccmpred")
     '''
         add a more thorough check of the database folder
     '''
     file_hhdb="%s/database/%s_a3m.ffdata"%(hhlib,dbname)
     fileIO.check_file(file_hhdb,cue_message=dbname+" files not found. Download the files again.")
+    dict_hhv['hhdb']="%s/database/%s"%(hhlib,dbname)
     return dict_hhv

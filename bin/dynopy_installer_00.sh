@@ -51,7 +51,7 @@ hhsuite_install()
 		cd $dir_hhdbs 
 		#if [ ! -f "UniRef30_2020_02_cs219.ffdata" ];
 		((folder_size=$(du -s | awk '{print $1}')))
-		if [ $folder_size -gt 104034292 ];
+		if [ $folder_size -gt 140034292 ];
 		then
 			echo "$file_dbs DATABASE DOWNLOAD INCOMPLETE. WILL TRY AGAIN"
 			cd $dir_main
@@ -68,6 +68,8 @@ hhsuite_install()
 		then
 			wget http://wwwuser.gwdg.de/~compbiol/uniclust/2020_02/$file_dbs.tar.gz
 			tar -xvf $file_dbs.tar.gz
+			mkdir $file_dbs
+			mv *.* $filde_dbs
 		fi
 		
 	fi
