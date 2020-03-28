@@ -26,9 +26,13 @@
 import dynoIO.fileIO as fileIO
 import shutil,os,subprocess
 def check_exe(exe_for_search):
-    #shutil.which(exe_for_search)
+    exloc=shutil.which(exe_for_search)
+    if(exloc==None):
+        print('EXE_NOT_FOUND %s'%(exe_for_search))
+        exit()
+    else:
+        print('EXE_FOUND @ %s'%(exloc))
     #rc=subprocess.getoutput("which %s"%(exe_for_search))
-    return os.path.isfile()
 def check_hhblits(dbname):
     hhlib   =   os.getenv("HHLIB")
     if(hhlib==None):
@@ -45,7 +49,7 @@ def check_hhblits(dbname):
 
     fileIO.check_exe(dict_hhv['hhblits'])
     fileIO.check_exe(dict_hhv['hhfilter'])
-    fileIO.check_exe("ccmpred")
+    check_exe("ccmpred")
     '''
         add a more thorough check of the database folder
     '''
