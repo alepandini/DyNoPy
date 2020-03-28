@@ -23,35 +23,29 @@
      along with DyNoPy.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
+import dynoIO.fileIO as fileIO
 import shutil
 import subprocess
 def check_exe(exe_for_search):
     #shutil.which(exe_for_search)
-    rc=subprocess.getoutput("which %s"%(exe_for_search))
-    return rc
+    #rc=subprocess.getoutput("which %s"%(exe_for_search))
+    return os.path.isfile()
 def check_hhblits(dbname):
-    hhb_exe="hhblits";    
-    hhf_exe="hhfilter";
-    rc=check_exe(hhb_exe)
-    if(check_exe(hhb_exe)==None):
-        print('hhblits NOT_FOUND. INSTALL hh-suite. exiting...')
+    hhlib   =   os.getenv("HHLIB")
+    dict_hhv={};
+    dict_hhv['hhlib']   =   hhlib;
+    dict_hhv['hhblits'] =   hhlib+"/build/bin/hhblits";
+    dict_hhv['hhfilter']=   hhlib+"/build/bin/hhfilter";
+    if(hhlib==None):
+        print('HHLIB variable not set. HHLIB should point to hh-suite directory')
+        print('DyNoPy expects:\n\thhblits and hhfilter @ $HHLIB/build/bin/')
+        print('\t uniprot files @ $HHLIB\database')
+        print('Exiting.')
         exit()
-    else:
-        print('FOUND \t : hhblits @ %s'%(check_exe(hhb_exe)))
-    if(check_exe(hhf_exe)==None):
-        print('hhbfilter NOT_FOUND. INSTALL hh-suite. exiting...')
-        exit()
-    else:
-        print('FOUND \t : hhfilter @ %s'%(check_exe(hhf_exe)))
-
-    exit()
+    fileIO.check_exe(dict_hhv['hhblits'])
+    fileIO.check_exe(dict_hhv['hhfilter'])
     '''
-        WARNING: Set the name of uniclust database. Should be present in $hhpath
+        add a more thorough check of the database folder
     '''
-    hh_database="%s/%s/%s"%(hhpath,dbname,dbname)
-    if(os.path.isdir(hhpath+'/'+dbname)==False):
-        print('HHBLITS uniclust database not found in path: %s'%(hh_database))
-        exit()
-    else:
-        print('HHBLITS DATABASE directory found...')
-
+    file_hhdb="%s/database/%s_a3m.ffdata"%(hhlib,dbname)
+    fileIO.check_file(file_hhdb,cue_message=dbname+" files not found. Download the files again.")
