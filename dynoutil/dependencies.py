@@ -24,8 +24,7 @@
 
 '''
 import dynoIO.fileIO as fileIO
-import shutil
-import subprocess
+import shutil,os,subprocess
 def check_exe(exe_for_search):
     #shutil.which(exe_for_search)
     #rc=subprocess.getoutput("which %s"%(exe_for_search))
