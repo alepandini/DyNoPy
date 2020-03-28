@@ -31,16 +31,18 @@ def check_exe(exe_for_search):
     return os.path.isfile()
 def check_hhblits(dbname):
     hhlib   =   os.getenv("HHLIB")
-    dict_hhv={};
-    dict_hhv['hhlib']   =   hhlib;
-    dict_hhv['hhblits'] =   hhlib+"/build/bin/hhblits";
-    dict_hhv['hhfilter']=   hhlib+"/build/bin/hhfilter";
     if(hhlib==None):
         print('HHLIB variable not set. HHLIB should point to hh-suite directory')
         print('DyNoPy expects:\n\thhblits and hhfilter @ $HHLIB/build/bin/')
         print('\t uniprot files @ $HHLIB\database')
         print('Exiting.')
         exit()
+    
+    dict_hhv={};
+    dict_hhv['hhlib']   =   hhlib;
+    dict_hhv['hhblits'] =   hhlib+"/build/bin/hhblits";
+    dict_hhv['hhfilter']=   hhlib+"/build/bin/hhfilter";
+
     fileIO.check_exe(dict_hhv['hhblits'])
     fileIO.check_exe(dict_hhv['hhfilter'])
     fileIO.check_exe("ccmpred")

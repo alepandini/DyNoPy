@@ -24,13 +24,17 @@
 
 '''
 import timeit,os,sys
+import multiprocessing as mp
 import dynoutil.dependencies as dependency
 import dynoIO.fileIO as fileIO
 import dynoIO.options as argParser
 
 perf_out="Performance stats...\n";
 
+nthreads=1;
+
 file_aln="";	path_hhdb=""; pdbID="";
+
 dict_hhv={};
 
 def run_hhblits(num_threads=4):
@@ -66,19 +70,27 @@ def run_ccmpred_gpu(num_threads=0):
     global perf_out
     start = timeit.default_timer()
     print ("Running CCMPRED on %s .........."%(pdbID))
-
     ccmpred_com="ccmpred %s %s -n 75"%(file_aln,file_ccm)
     os.system(ccmpred_com)
     stop = timeit.default_timer()
     perf_out+="%-15s : %12.2f(s) ; (GPU)\n"%("CCMPRED",stop-start);
     perf_out+='%-15s : %12s\n'%('Co-evo Matrix',ccm_file)
-
+def checkmaxthreads():
+    global nthreads
+    nthreads=int(nthreads)
+    threads_max =   mp.cpu_count();
+    if(nthreads>threads_max):
+        nthreads=round(threads_max*0.8)
+    
 def main():
     global file_aln,file_ccm,pdbID
     args    =   argParser.opts_coevolution();
     pdbID   =   args.pdbid
     hhdb    =   args.database
     nthreads=   args.numthreads
+    # check if  nthreads set is more than available
+    checkmaxthreads()
+
     #check if hhblits and database are installed
     dict_hhv=dependency.check_hhblits(hhdb);
 

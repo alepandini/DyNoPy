@@ -32,7 +32,7 @@ def check_file(fName,cue_message=''):
         print('FILE_FOUND: %s'%(fName))
 def check_exe(eName):
     if(os.path.isfile(eName)==False):
-        print('EXE_NOT_FOUND @ %s . %s Exiting...'%(eName))
+        print('EXE_NOT_FOUND : %s exiting...'%(eName))
         exit()
     else:
         print('EXE_FOUND     @ %s'%(eName))
