@@ -55,7 +55,7 @@ def run_hhblits():
 
     ### run hhfilter
     print('Running hhfilter....')
-    hh_filter="hhfilter -id 90 -cov 75 -v 2 -i %s -o %s"%(a3m,oa3m)
+    hh_filter="%s -id 90 -cov 75 -v 2 -i %s -o %s"%(dict_hhv['hhfilter'],a3m,oa3m)
     os.system(hh_filter)
     fileIO.check_file(oa3m,'hhfilter run might have failed...')
 	
@@ -64,7 +64,7 @@ def run_hhblits():
     os.system(a3mtoaln)
     fileIO.check_file(file_aln)
     stop = timeit.default_timer()
-    perf_out+="%-15s : %12.2f(s) ; (N_THREADS=%4d)\n"%("HHBLITS",stop-start,num_threads);
+    perf_out+="%-15s : %12.2f(s) ; (N_THREADS=%4d)\n"%("HHBLITS",stop-start,nthreads);
 
 def run_ccmpred_gpu():
     global perf_out
@@ -74,7 +74,7 @@ def run_ccmpred_gpu():
     os.system(ccmpred_com)
     stop = timeit.default_timer()
     perf_out+="%-15s : %12.2f(s) ; (GPU)\n"%("CCMPRED",stop-start);
-    perf_out+='%-15s : %12s\n'%('Co-evo Matrix',ccm_file)
+    perf_out+='%-15s : %12s\n'%('Co-evo Matrix',file_ccm)
 def checkmaxthreads():
     global nthreads
     nthreads=int(nthreads)
@@ -83,7 +83,7 @@ def checkmaxthreads():
         nthreads=round(threads_max*0.8)
     
 def main():
-    global file_aln,file_ccm,pdbID,nthreads
+    global file_aln,file_ccm,pdbID,nthreads,dict_hhv
     args    =   argParser.opts_coevolution();
     pdbID   =   args.pdbid
     hhdb    =   args.database

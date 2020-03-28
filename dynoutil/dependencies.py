@@ -55,5 +55,5 @@ def check_hhblits(dbname):
     '''
     file_hhdb="%s/database/%s/%s_a3m.ffdata"%(hhlib,dbname,dbname)
     fileIO.check_file(file_hhdb,cue_message=dbname+" files not found. Download the files again.")
-    dict_hhv['hhdb']="%s/database/%s"%(hhlib,dbname)
+    dict_hhv['hhdb']="%s/database/%s/%s"%(hhlib,dbname,dbname)
     return dict_hhv
