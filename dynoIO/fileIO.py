@@ -23,6 +23,7 @@
      along with DyNoPy.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
+import os
 def check_file(fName,cue_message=''):
     if(os.path.isfile(fName)==False):
         print('FILE_NOT_FOUND : %s . %s Exiting...'%(fName,cue_message))
