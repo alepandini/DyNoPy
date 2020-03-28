@@ -56,8 +56,7 @@ export AMBERHOME="/home/username/myfavdir/amber/amber18"
 export PATH="$PATH:$AMBERHOME/bin"
 ```
 
-
-##**Developer area**
+## **Developer area**
 
 ###**Progress**
 	- Convert tools to wrappers for class calls
