@@ -1,10 +1,10 @@
 # DyNoPy (Dynamics based Network cOmparisons in Python)
 ## **What does it do?**
 This package will help you generate:
-1. Coevolution matrices from a FASTA sequences
+1. Coevolution matrices from FASTA sequences
 2. Pairwise non-bonded interaction energies from MD trajectories 
-3. Lists of residue pairs contributing to functional motion
-4. Networks representations of coevolved residues involved in functional dynamics
+3. Lists of residue pairs contributing to functional motions
+4. Network representations of coevolved residues involved in functional dynamics
 
 #### **Requirements**
 	- Python3.6, numpy 1.15, matplotlib
