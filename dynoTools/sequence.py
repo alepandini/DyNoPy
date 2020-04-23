@@ -25,8 +25,8 @@
 '''
 import logging
 import dynoIO.fileIO as fileIO
-import dynoTools.sequence_utils as seq_utils
-import dynoTools.dynoMath as dMath
+from dynoTools.sequence_utils import SeqTools
+import dynoutil.dynoMath as dMath
 import numpy as np
 
 class Sequence(object):
@@ -47,18 +47,19 @@ class Sequence(object):
         self.LIST_SEQUENCES     =   [];
         self.MATRIX_COEV        =   np.zeros((self._default_N,self._default_N));
         self.MATRIX_COEV_RHO    =   np.zeros((self._default_N,self._default_N));
-
+        self._seq_utils         = SeqTools();
     def _get_fasta(self):
         _seq,_dict_seq              =   fileIO.read_fasta(self._dict_params['file_fasta']);
         self.FASTA_SEQUENCE         =   _seq;
         self.DICT_FASTA_SEQUENCE    =   _dict_seq;
         self.LENGTH_SEQ             =   len(_seq);
         self._logger.info('%-25s : %d','No. of aa',self.LENGTH_SEQ);
-
+    
     def _check_for_reference(self):
         for count,seq in enumerate(self.LIST_SEQUENCES):
             if(seq==self.FASTA_SEQUENCE):
                 self._logger.info('%-25s : %d','REF_SEQ_FOUND',count+1)
+
     def _info_alignment(self):
         self._get_fasta()
         self._get_alignment();
@@ -77,9 +78,16 @@ class Sequence(object):
         fileIO.save_matrix(_fname,self.MATRIX_COEV_RHO)
     def _prccs(self):
         self._get_matrix();
-        _prccs_data=dMath.calc_prccs(self.MATRIX_COEV_RHO);
+        _prccs_data=dMath.calc_prccs(self.MATRIX_COEV_RHO,method=2);
         _fname="PRCCS-%s.txt"%(self._dict_params['file_lab'])
         fileIO.save_file(_fname,_prccs_data)
+
+    def _calc_log_odd_matrix(self):
+        fName="%s.h5"%(self._dict_params['file_lab']);
+        self._info_alignment();
+        self._get_matrix();
+        self._seq_utils.calc_log_odd_matrix(self.LIST_SEQUENCES,fName);
+
     def analysis_manager(self,dict_params):
         self._dict_params   =   dict_params;
         self._type_analysis =   self._dict_params['type_ana'];
@@ -91,4 +99,9 @@ class Sequence(object):
             self._get_matrix();
         if(self._type_analysis  ==  3):
             self._prccs();
+        if(self._type_analysis  == 4):
+            self._calc_log_odd_matrix();
+        else:
+            self._logger.info('Choosen methods not implemented yet. Choose between 0-4')
+            exit()
 

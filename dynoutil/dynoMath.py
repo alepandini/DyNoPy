@@ -40,18 +40,20 @@ def normalize_matrix(input_matrix,method=1):
     else:
         new_matrix=input_matrix;
     return new_matrix
-def _per_res_sum(ires_data,cut_off=1.0):
-    _sum=0;
+def _per_res_sum(ires_data,cut_off=1.0,method=1):
+    _sum=0; _num_gt=0;
     for i in ires_data:
         if(i>=cut_off):
-            _sum+=i
+            if(method==1):
+                _sum+=i;
+            if(method==2):
+                _sum+=(i-1);
+            _num_gt+=1;
     return _sum
 def calc_prccs(matrix,method=1):
     _avg_cutoff=1.0;
     prccs="";
     N_rows  =   matrix.shape[0];
     for i in range(N_rows):
-        prccs+="%12d%12.3f\n"%(i+1,_per_res_sum(matrix[i]))
+        prccs+="%12d%12.3f\n"%(i+1,_per_res_sum(matrix[i],cut_off=1.0,method=method))
     return prccs
-        
-

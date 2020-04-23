@@ -58,7 +58,7 @@ def opts_aln_analysis():
     parser.add_argument("-t", "--type",
                         default =   0,
                         type    =   int,
-                        choices =   [0,1,2,3],
+                        choices =   [0,1,2,3,4],
                         help    =   " 0   : Print FASTA info\n 1   : Print alignment info\n 2   : Normalized coevolution matrix\n 3   : Per-residue coevolution cummulative score (PRCCS)\n 4   : log-odds matrix (Not Implemented)\n 5   : Not implemented\n99   : Not Implemented");
     args = parser.parse_args()
     return args
