@@ -35,3 +35,30 @@ def opts_coevolution():
         exit()
         
     return args
+def opts_aln_analysis():
+    _usage_info="Sequence analysis tool helps you analyse the following: \n FASTA \n coevolution matrix."
+    parser = argp.ArgumentParser(prog                   =   "dyno_aln_analysis.py",
+                                 usage="",description   =   _usage_info,
+                                 formatter_class        =   argp.RawTextHelpFormatter
+                                 );
+    parser.add_argument("-f","--fasta",
+                        default=None,
+                        required=True,
+                        help="fasta file with the reference protein sequence"
+                        );
+    parser.add_argument("-m","--matrix",
+                        default=None,
+                        help="coevolution matrix file");
+    parser.add_argument("-a", "--aln",
+                        default=None,
+                        help="number of threads to use");
+    parser.add_argument("-l", "--label",
+                        default="SeqAna",
+                        help="the label of the output file");
+    parser.add_argument("-t", "--type",
+                        default =   0,
+                        type    =   int,
+                        choices =   [0,1,2,3],
+                        help    =   " 0   : Print FASTA info\n 1   : Print alignment info\n 2   : Normalized coevolution matrix\n 3   : Per-residue coevolution cummulative score (PRCCS)\n 4   : log-odds matrix\n 5   : \n99   : ");
+    args = parser.parse_args()
+    return args

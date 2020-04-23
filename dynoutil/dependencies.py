@@ -23,7 +23,7 @@
      along with DyNoPy.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-import dynoIO.fileIO as fileIO
+import dynoIO.fUtils as fUtils
 import shutil,os,subprocess
 def check_exe(exe_for_search):
     exloc=shutil.which(exe_for_search)
@@ -47,13 +47,13 @@ def check_hhblits(dbname):
     dict_hhv['hhblits'] =   hhlib+"/build/bin/hhblits";
     dict_hhv['hhfilter']=   hhlib+"/build/bin/hhfilter";
 
-    fileIO.check_exe(dict_hhv['hhblits'])
-    fileIO.check_exe(dict_hhv['hhfilter'])
+    fUtils.check_exe(dict_hhv['hhblits'])
+    fUtils.check_exe(dict_hhv['hhfilter'])
     check_exe("ccmpred")
     '''
         add a more thorough check of the database folder
     '''
     file_hhdb="%s/database/%s/%s_a3m.ffdata"%(hhlib,dbname,dbname)
-    fileIO.check_file(file_hhdb,cue_message=dbname+" files not found. Download the files again.")
+    fUtils.check_file(file_hhdb,cue_message=dbname+" files not found. Download the files again.")
     dict_hhv['hhdb']="%s/database/%s/%s"%(hhlib,dbname,dbname)
     return dict_hhv

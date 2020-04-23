@@ -26,7 +26,7 @@
 import timeit,os,sys
 import multiprocessing as mp
 import dynoutil.dependencies as dependency
-import dynoIO.fileIO as fileIO
+import dynoIO.fileUtils as fUtils
 import dynoIO.options as argParser
 
 perf_out="Performance stats...\n";
@@ -43,7 +43,7 @@ def run_hhblits():
     fasta="%s.fasta"%(pdbID);	hhr="%s-%d.hhr"%(pdbID,nthreads);	a3m="%s-%d.a3m"%(pdbID,nthreads)
     oa3m="%s.a3m"%(pdbID);
     ### check if fasta file is present
-    fileIO.check_file(fasta);
+    fUtils.check_file(fasta);
     
     #dbname="uniclust30_2017_10"
     #hh_database="%s/%s/%s"%(hhpath,dbname,dbname)
@@ -51,18 +51,18 @@ def run_hhblits():
     print('Running hhblits on : %s'%(fasta))
     hh_com="%s -B 100000 -v 2 -n 4 -cpu %d -neffmax 20 -nodiff -maxfilt 100000 -d %s -i %s -o %s -oa3m %s"%(dict_hhv['hhblits'],nthreads,dict_hhv['hhdb'],fasta,hhr,a3m)
     os.system(hh_com)
-    fileIO.check_file(a3m,'hhblits run might have failed...')
+    fUtils.check_file(a3m,'hhblits run might have failed...')
 
     ### run hhfilter
     print('Running hhfilter....')
     hh_filter="%s -id 90 -cov 75 -v 2 -i %s -o %s"%(dict_hhv['hhfilter'],a3m,oa3m)
     os.system(hh_filter)
-    fileIO.check_file(oa3m,'hhfilter run might have failed...')
+    fUtils.check_file(oa3m,'hhfilter run might have failed...')
 	
     ### check for unique sequences
     a3mtoaln="egrep -v \"^>\" %s | sed 's/[a-z]//g' | sort -u > %s"%(oa3m,file_aln)
     os.system(a3mtoaln)
-    fileIO.check_file(file_aln)
+    fUtils.check_file(file_aln)
     stop = timeit.default_timer()
     perf_out+="%-15s : %12.2f(s) ; (N_THREADS=%4d)\n"%("HHBLITS",stop-start,nthreads);
 
