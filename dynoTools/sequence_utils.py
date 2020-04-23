@@ -77,7 +77,7 @@ class SeqTools(object):
     def per_pair_log_odds_score(self,res_A,res_B):
 
         self._dict_aa_pair      =   hash_maps.generate_combi_aa();
-        self._freq_A       =   ;
+        self._freq_A       =  0 ;
         self._dict_freq_B       =   hash_maps.aadict();
         self._evolution_freq    = [];
         
