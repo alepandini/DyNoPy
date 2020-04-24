@@ -14,7 +14,7 @@
      the Free Software Foundation, either version 3 of the License, or
      (at your option) any later version.
 
-     DPD is distributed in the hope that it will be useful,
+     DyNoPy is distributed in the hope that it will be useful,
      but WITHOUT ANY WARRANTY; without even the implied warranty of
      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
      GNU General Public License for more details.
@@ -23,19 +23,28 @@
      along with DyNoPy.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-import os,logging
-logger=logging.getLogger('DyNo IO ')
-def check_file(fName,cue_message=''):
+import timeit,os,logging
+import dynoIO.fileIO as fileIO
+import dynoutil.options as argParser
+
+logger="";
+dict_params={};
+def initiate_logging():
     global logger
-    if(os.path.isfile(fName)==False):
-        logger.info('%-25s : %s. %s. EXITING','FILE_NOT_FOUND',fName,cue_message)
-        exit()
-    else:
-        logger.info('%-25s : %s','FILE_FOUND',fName)
-def check_exe(eName):
+    '''
+        input: coevolution matrix, sequence alignment, fasta sequence
+            -- calculate frequencies of A and B
+            -- generates pairs
+            -- assign weights to each pair 
+                @log frequencies
+                @
+    '''
+    logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.INFO);
+    logger=logging.getLogger('Dyno H5  ')
+
+def main():
     global logger
-    if(os.path.isfile(eName)==False):
-        logger.info('%-25s : %s. EXITING','EXE_NOT_FOUND',eName)
-        exit()
-    else:
-        logger.info('%-25s : %s','EXE_FOUND',eName)
+    initiate_logging();
+    args    =   argParser.conv_h5_to_ascii();
+    fileIO.convert_h5_to_ascii(args.h5,args.pair,args.out)
+main()

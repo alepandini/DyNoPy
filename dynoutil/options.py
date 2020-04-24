@@ -62,3 +62,25 @@ def opts_aln_analysis():
                         help    =   " 0   : Print FASTA info\n 1   : Print alignment info\n 2   : Normalized coevolution matrix\n 3   : Per-residue coevolution cummulative score (PRCCS)\n 4   : log-odds matrix (Not Implemented)\n 5   : Not implemented\n99   : Not Implemented");
     args = parser.parse_args()
     return args
+def conv_h5_to_ascii():
+    _usage_info="Extract the data stored in h5 file with the pair key:\n dyno_h5_to_ascii.py -i Data.h5 -o 1-2-Log.txt -p 1-2"
+    parser = argp.ArgumentParser(prog                   =   "dyno_h5_to_ascii.py",
+                                 usage="",description   =   _usage_info,
+                                 formatter_class        =   argp.RawTextHelpFormatter
+                                 );
+    parser.add_argument("-i","--h5",
+                        default=None,
+                        required=True,
+                        help="fasta file with the reference protein sequence"
+                        );
+    parser.add_argument("-o","--out",
+                        default="PAIR-ASCII.txt",
+                        help="Output ASCII file"
+                        );
+
+    parser.add_argument("-p", "--pair",
+                        default="1-2",
+                        help="Pairs to extract. MULTIPLE PAIRS NOT SUPPORTED YET"
+                        );
+    args = parser.parse_args()
+    return args

@@ -24,7 +24,7 @@
 
 '''
 import numpy as np
-import os,logging
+import os,logging,h5py
 import dynoIO.fileUtils as fUtils
 logger=logging.getLogger('DyNo IO ')
 def save_file(fName,data):
@@ -78,3 +78,18 @@ def read_matrix(matF):
     return matrix
 def save_matrix(fName,matrix):
     np.savetxt(fName,matrix,fmt='%10.5f')
+def convert_h5_to_ascii(in_h5,pair,out_txt):
+    hf  =   h5py.File(in_h5,'r')
+    out_txt="%s-%s"%(pair,out_txt)
+    if(pair in hf):
+        data    =   hf.get(pair);
+        data    =   np.array(data);
+        x,y     =   data.shape;
+        if(x==y):
+            save_matrix(out_txt,data);
+        if(x>y):
+            out="";
+            for d in data:
+                out+="%6s %8.3f\n"%(d[0].decode('UTF-8'),float(d[1].decode('UTF-8')))
+            save_file(out_txt,out)
+
