@@ -23,7 +23,7 @@ def gen_h5(pairs_list):
         if(os.path.isfile(datF)==True):
             npdata=returnData(datF);
             saveh5(h5pF,npdata);
-            #os.system('rm %s'%(datF))
+            os.system('rm %s'%(datF))
 def returnData(inF):
     n1=np.loadtxt(inF);
     ncols=n1.shape[1];

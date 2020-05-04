@@ -23,7 +23,10 @@ class PWIE(object):
 
     def _get_pairs(self):
         self._list_pairs    =   pwieutils.gen_pair_list(self._resi_fst,self._resi_lst,gap=1)
+        self._logger.info('%-25s : %8d'%('First Residue',self._resi_fst))
+        self._logger.info('%-25s : %8d'%('Last  Residue',self._resi_lst))
         self._logger.info('%-25s : %8d'%('NPairs',len(self._list_pairs)))
+
  
     def _ech_head(self):	
         out_head="parm %s\n"%(self._file_top);
@@ -38,6 +41,7 @@ class PWIE(object):
         comm="cpptraj >/dev/null 2>&1 <<-EOF\n%s\nEOF"%(self._ech_out)
         return comm
     def _run_cpptraj(self):
+        self._logger.info('%-25s : %8s'%('No. of pair sets',len(self._list_cpp):q)
         pwieutils.run_cpptraj_parallel(self._list_cpp,self._thrd_max,self._dir_name,self._file_lab);
 
     def _gen_cpp_command_list(self):
