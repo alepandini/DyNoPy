@@ -84,3 +84,49 @@ def conv_h5_to_ascii():
                         );
     args = parser.parse_args()
     return args
+
+def pwie():
+    _usage_info="Calculate Pairwise Interaction Energies for selected residue range:\n dyno_pwie.py -f xtc/binpos -l label -t topology  "
+    parser = argp.ArgumentParser(prog                   =   "dyno_pwie.py",
+                                 usage="",description   =   _usage_info,
+                                 formatter_class        =   argp.RawTextHelpFormatter
+                                 );
+    parser.add_argument("-x","--trj",
+                        default=None,
+                        required=True,
+                        help="trajectory file"
+                        );
+
+    parser.add_argument("-t","--top",
+                        default=None,
+                        required=True,
+                        help="topology file"
+                        );
+
+    parser.add_argument("-f","--fst",
+                        default=1,
+                        type=int,
+                        help="first residue"
+                        );
+
+    parser.add_argument("-l","--lst",
+                        default=10,
+                        type=int,
+                        help="last residue"
+                        );
+    parser.add_argument("-p","--pmax",
+                        default=10,
+                        type=int,
+                        help="maximum number of pairs"
+                        );
+    parser.add_argument("-n","--tmax",
+                        default=10,
+                        type=int,
+                        help="number of threads to use"
+                        );
+    parser.add_argument("-o","--label",
+                        default="PWIE",
+                        help="Label to add to all the files"
+                        );
+    args = parser.parse_args()
+    return args

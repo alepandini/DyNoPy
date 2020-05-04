@@ -39,3 +39,7 @@ def check_exe(eName):
         exit()
     else:
         logger.info('%-25s : %s','EXE_FOUND',eName)
+def check_dir(dirN):
+    if(os.path.isdir(dirN)==False):
+        os.system('mkdir %s'%(dirN))
+

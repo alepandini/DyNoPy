@@ -112,7 +112,7 @@ class SeqTools(object):
                 self._dict_joint_freq[aa_pair]  =   numerator;
                 self._matrix_frq[i][j]          =   numerator;
                 self._matrix_log[i][j]          =   score;
-                self._tup_aa_frq.append((aa_pair,numerator));
+                self._tup_aa_frq.append((aa_pair,score));
     def calc_log_odd_matrix(self,aligned_sequence,fName):
         #calculate the frequencies of aa for each residue
         self._aligned_sequences =   aligned_sequence;
