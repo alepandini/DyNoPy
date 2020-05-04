@@ -41,7 +41,7 @@ class PWIE(object):
         comm="cpptraj >/dev/null 2>&1 <<-EOF\n%s\nEOF"%(self._ech_out)
         return comm
     def _run_cpptraj(self):
-        self._logger.info('%-25s : %8s'%('No. of pair sets',len(self._list_cpp))
+        self._logger.info('%-25s : %8s'%('No. of pair sets',len(self._list_cpp)))
         pwieutils.run_cpptraj_parallel(self._list_cpp,self._thrd_max,self._dir_name,self._file_lab);
 
     def _gen_cpp_command_list(self):
