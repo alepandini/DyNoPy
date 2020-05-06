@@ -86,7 +86,10 @@ def conv_h5_to_ascii():
     return args
 
 def pwie():
-    _usage_info="Calculate Pairwise Interaction Energies for selected residue range:\n dyno_pwie.py -x xtc/binpos -l label -t topology -f 1 -l 10 -p 10 -n 8"
+    _usage_info="Calculate Pairwise Interaction Energies for selected residue range:\n"
+    _usage_info+="dyno_pwie.py -x xtc/binpos -l label -t topology -f first_residue_id -l last_residue_id -p num_pairs -n num_threads\n"
+    _usage_info+="e.g.: dyno_pwie.py -x KPC2.binpos -t KPC2_nowat.prmtop -f 1 -l 10 -p 10 -n 8 -o KPC2 \n";
+
     parser = argp.ArgumentParser(prog                   =   "dyno_pwie.py",
                                  usage="",description   =   _usage_info,
                                  formatter_class        =   argp.RawTextHelpFormatter
