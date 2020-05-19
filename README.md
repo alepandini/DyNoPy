@@ -3,8 +3,8 @@
 This package will help you generate:
 1. Coevolution matrices from FASTA sequences
 2. Pairwise non-bonded interaction energies from MD trajectories 
-3. Lists of residue pairs contributing to functional motions
-4. Network representations of coevolved residues involved in functional dynamics
+3. Pairwise residue contributions to functional motions
+4. Pairwise combined covevolution and dynamical score
 
 #### **Requirements**
 	- Python3.6, numpy 1.15, matplotlib
@@ -60,7 +60,7 @@ export PATH="$PATH:$AMBERHOME/bin"
 
 ## **Developer area**
 
-###**Progress**
+### **Progress**
 	- Convert tools to wrappers for class calls
 	- Clean up the code
 - **Co-evolution analysis**
