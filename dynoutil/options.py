@@ -133,3 +133,23 @@ def pwie():
                         );
     args = parser.parse_args()
     return args
+def resrank():
+    _usage_info="In a protein rank the residues by their importance:\n"
+    _usage_info+="dyno_resrank.py -h\n"
+    _usage_info+="e.g.: dyno_resrank.py -u P10191 \n";
+
+    parser = argp.ArgumentParser(prog                   =   "resrank.py",
+                                 usage="",description   =   _usage_info,
+                                 formatter_class        =   argp.RawTextHelpFormatter
+                                 );
+    parser.add_argument("-u","--uniprot",
+                        default=None,
+                        help="uniprot ID"
+                        );
+
+    parser.add_argument("-p","--pdbid",
+                        default=None,
+                        help="pdb ID"
+                        );
+    args = parser.parse_args()
+    return args

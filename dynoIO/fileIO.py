@@ -27,10 +27,18 @@ import numpy as np
 import os,logging,h5py
 import dynoIO.fileUtils as fUtils
 logger=logging.getLogger('DyNo IO ')
+
 def save_file(fName,data):
     f=open(fName,'w')
     f.write(data)
     f.close();
+
+def read_file(filename):
+    f=open(filename,'r');
+    data="";
+    for line in f:
+        data+=line
+    return data
 
 def read_aln(fName):
     global logger
@@ -92,4 +100,26 @@ def convert_h5_to_ascii(in_h5,pair,out_txt):
             for d in data:
                 out+="%6s %8.3f\n"%(d[0].decode('UTF-8'),float(d[1].decode('UTF-8')))
             save_file(out_txt,out)
+def read_fasta(seq_file):
+    global logger
+    FASTA_SEQUENCE="";
+    fileObject=open(seq_file,'r');
+    for line in fileObject:
+        if(line[0]!=">"):
+            line=line.strip()
+            for i in line:
+                FASTA_SEQUENCE+="%s"%(i);
+    return FASTA_SEQUENCE
 
+def remove_grammar(word):
+    if(word.find(",")>-1):
+        word=word.split(",")[0]
+    if(word.find(";")>-1):
+        word=word.split(";")[0]
+    return word
+
+def save_record(fname,record):
+    global logger
+    logger.info('%-15s : %s','Saving',fname)
+    with open(fname,'wb') as file:
+        file.write(record.content)

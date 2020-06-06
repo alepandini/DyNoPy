@@ -236,5 +236,31 @@ def aafreq_from_literature(aa):
         }
     if aa in aafreq:
         freq=aafreq[aa]/100.0;
-    
     return freq
+def get_ft_types():
+    '''
+        https://web.expasy.org/docs/userman.html#FT_keys
+    '''
+    dict_ft_types={};
+    dict_ft_types   =   {
+            "SIGNAL"    :   [],
+            "CA_BIND"   :   [],
+            "ZN_FING"   :   [],
+            "DNA_BIND"  :   [],
+            "NP_BIND"   :   [],
+            "ACT_SITE"  :   [],
+            "METAL"     :   [],
+            "BINDING"   :   [],
+            "SITE"      :   [],
+            "MOD_RES"   :   [],
+            "CARBOHYD"  :   [],
+            "DISULFID"  :   [],
+            "CROSSLINK" :   [],
+            "MUTAGEN"   :   [],
+            }
+    return dict_ft_types
+def get_flag_kw():
+    dict_flag_kw={};
+    dict_flag_kw   =   {
+            "NON_CONS"  :   "",
+            }
