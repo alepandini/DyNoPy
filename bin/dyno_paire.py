@@ -21,7 +21,7 @@ import timeit,os,sys
 import multiprocessing as mp
 import dynoutil.dependencies as dependency
 import dynoIO.fileIO as fileIO
-import dynoIO.options as argParser
+import dynoutil.options as argParser
 
 def main():
     global file_aln,file_ccm,pdbID,nthreads,dict_hhv
