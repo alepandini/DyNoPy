@@ -88,7 +88,6 @@ def save_matrix(fName,matrix):
     np.savetxt(fName,matrix,fmt='%10.5f')
 def convert_h5_to_ascii(in_h5,pair,out_txt):
     hf  =   h5py.File(in_h5,'r')
-    out_txt="%s-%s"%(pair,out_txt)
     if(pair in hf):
         data    =   hf.get(pair);
         data    =   np.array(data);
@@ -98,7 +97,7 @@ def convert_h5_to_ascii(in_h5,pair,out_txt):
         if(x>y):
             out="";
             for count,d in enumerate(data):
-                out+="%6d%8.5f%8.5f\n"%(count,float(d[0]),float(d[1]))
+                out+="%12d%12.5f%12.5f\n"%(count,float(d[0]),float(d[1]))
             save_file(out_txt,out)
 def read_fasta(seq_file):
     global logger
