@@ -97,8 +97,8 @@ def convert_h5_to_ascii(in_h5,pair,out_txt):
             save_matrix(out_txt,data);
         if(x>y):
             out="";
-            for d in data:
-                out+="%6s %8.3f\n"%(d[0].decode('UTF-8'),float(d[1].decode('UTF-8')))
+            for count,d in enumerate(data):
+                out+="%6d%8.5f%8.5f\n"%(count,float(d[0]),float(d[1]))
             save_file(out_txt,out)
 def read_fasta(seq_file):
     global logger
