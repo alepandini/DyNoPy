@@ -237,11 +237,12 @@ def aafreq_from_literature(aa):
     if aa in aafreq:
         freq=aafreq[aa]/100.0;
     return freq
-def get_ft_types():
+def get_ft_types_txt():
     '''
         https://web.expasy.org/docs/userman.html#FT_keys
     '''
     dict_ft_types={};
+    
     dict_ft_types   =   {
             "SIGNAL"    :   [],
             "CA_BIND"   :   [],
@@ -259,6 +260,42 @@ def get_ft_types():
             "MUTAGEN"   :   [],
             }
     return dict_ft_types
+
+def get_ft_code(ft_type,fmt="xml"):
+    '''
+        https://web.expasy.org/docs/userman.html#FT_keys
+    '''
+    ft_code=9;
+    dict_ft_types   =   {
+            "ACTIVE_SITE"       :   0,
+            "MUTAGENESIS_SITE"  :   1,
+            "BINDING_SITE"      :   2,
+            "HELIX"             :   "H",
+            "STRAND"            :   "S",
+            "TURN"              :   "T"
+            }
+    
+    if(ft_type in dict_ft_types):
+        ft_code =   dict_ft_types[ft_type]
+    else:
+        print('FT_CODE_NOT_FOUND FOR %s'%(ft_type))
+        exit()
+    return ft_code
+
+def get_ss_code(ss_type="H"):
+    ss_code=9;
+    dict_ss =   {
+            "HELIX"     :   "H",
+            "STRAND"    :   "S",
+            "TURN"      :   "T"
+            }
+    if(ss_code in dict_ss):
+        ss_code=dict_ss[ss_type];
+    else:
+        print('SS_CODE_NOT_FOUND FOR %s'%(ss_type))
+        exit()
+    return ss_code
+
 def get_flag_kw():
     dict_flag_kw={};
     dict_flag_kw   =   {
