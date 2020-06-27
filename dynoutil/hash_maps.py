@@ -264,23 +264,60 @@ def get_ft_types_txt():
 def get_ft_code(ft_type,fmt="xml"):
     '''
         https://web.expasy.org/docs/userman.html#FT_keys
+
+        0   :   FUNCTION
+        1   :   SECONDARY STRUCTURE
+        
     '''
     ft_code=9;
     dict_ft_types   =   {
             "ACTIVE_SITE"       :   0,
-            "MUTAGENESIS_SITE"  :   1,
-            "BINDING_SITE"      :   2,
-            "HELIX"             :   "H",
-            "STRAND"            :   "S",
-            "TURN"              :   "T"
+            "MUTAGENESIS_SITE"  :   0,
+            "BINDING_SITE"      :   0,
+            "NUCLEOTIDE_PHOSPHATE-BINDING_REGION" : 0,
+            "SEQUENCE_CONFLICT" :   0,
+            "REGION_OF_INTEREST":   0,
+            "MODIFIED_RESIDUE"  :   0,
+            "HELIX"             :   0,
+            "STRAND"            :   0,
+            "TURN"              :   0,
+            "CHAIN"             :   2,
             }
-    
     if(ft_type in dict_ft_types):
         ft_code =   dict_ft_types[ft_type]
     else:
         print('FT_CODE_NOT_FOUND FOR %s'%(ft_type))
         exit()
     return ft_code
+
+def get_fn_code(ft_type,fmt="xml"):
+    '''
+        https://web.expasy.org/docs/userman.html#FT_keys
+
+        0   :   FUNCTION
+        1   :   SECONDARY STRUCTURE
+        
+    '''
+    fn_code=-1;
+    dict_ft_types   =   {
+            "ACTIVE_SITE"       :   0,
+            "MUTAGENESIS_SITE"  :   1,
+            "BINDING_SITE"      :   2,
+            "NUCLEOTIDE_PHOSPHATE-BINDING_REGION" : 3,
+            "REGION_OF_INTEREST"    :   4,
+            "SEQUENCE_CONFLICT" :   -1,
+            "MODIFIED_RESIDUE"  :   -1,
+            "HELIX"             :   "H",
+            "STRAND"            :   "S",
+            "TURN"              :   "T",
+            }
+    if(ft_type in dict_ft_types):
+        fn_code =   dict_ft_types[ft_type]
+    else:
+        print('FT_CODE_NOT_FOUND FOR %s'%(ft_type))
+        exit()
+    return fn_code
+
 
 def get_ss_code(ss_type="H"):
     ss_code=9;
@@ -296,8 +333,3 @@ def get_ss_code(ss_type="H"):
         exit()
     return ss_code
 
-def get_flag_kw():
-    dict_flag_kw={};
-    dict_flag_kw   =   {
-            "NON_CONS"  :   "",
-            }

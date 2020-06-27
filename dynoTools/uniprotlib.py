@@ -58,12 +58,13 @@ class UniLib(object):
         
         self.SEQUENCE   =   "";
         
-        self.PDB_LIST   =   [];
+        self.PDB_LIST   =   []; self.RESIDUE_LIST=[];
         
         self.EC_ID="";  self.ACCESSION_ID="";   self.NAME_PROTEIN="";
         
 
     def getuniprotdata(self,uni_file,fmt="xml"):
+        self._uniprot_id    =   uni_file.split('.')[0]
         self._uni_record    =   uni_file;
         self._fmt           =   fmt;
         if(self._fmt    ==  'xml'):
@@ -73,43 +74,131 @@ class UniLib(object):
 
     def _read_xml(self):
         self._entry_dict    =   self._schema.to_dict(self._uni_record);
-        '''
-        for key in self._entry_dict.keys():
-            print(key)
-        print('^^^'*20)
-        '''
         self._content =  self._entry_dict['entry'][0]
         self._keys    =  list(self._content.keys())
-        
-        self.ACCESSION_ID   =   self._content[self._keys[4]];
-        self.NAME_PROTEIN   =   self._content[self._keys[5]];
+        #for c,k in enumerate(self._keys):
+        #    print(c,k)
+        #print(len(self._keys))
+        self.ACCESSION_ID   =   self._content['accession'];
+        self.NAME_PROTEIN   =   self._content['name'];
         
         '''
             i=6 full details on name
             i=8     organism
             i=10    references for all 
         '''
-        self._get_ec_id();
+        #self._get_ec_id();
         self._get_sequence_details();
         self._get_pdb_list();
         self._get_residue_annotations();
-        exit()
     def _get_residue_annotations(self):
-        _data   =   self._get_data(i=15);
+        _data   =   self._get_data('feature');
         for d in _data:
             _ft_type    =   d['@type']
             _ft_mod     =   _ft_type.replace(' ','_').upper()
+            _ft_code    =   hmaps.get_ft_code(_ft_mod);
+            _fn_code    =   -1;
+
             if(_ft_type ==   'chain'):
                 _res_d  = d['location'];
                 self.RES_FIRST  =   int(_res_d['begin']['@position']);
                 self.RES_LAST   =   int(_res_d['end']['@position'])
-            print(_ft_type)
-        exit()
+                self._initialize_residue_list();
+            if(_ft_code==0):
+                '''
+                    {
+                    '@type': 'nucleotide phosphate-binding region', 
+                    '@description': 'ATP', 
+                    '@evidence': [3, 5, 6, 9, 13, 14], 
+                    'location': 
+                                {   'begin': {'@position': 10, '@status': 'certain'}, 
+                                    'end': {'@position': 15, '@status': 'certain'}
+                                }
+                    }
+
+                '''
+                #print(d)
+                #_ft_desc    =   d['@description']
+                _location   =   d['location']
+                #print(_location)
+                
+                if('begin'   in _location):
+                    _begin      =   int(_location['begin']['@position']);
+                    _end        =   _begin
+                
+                    if('end' in _location):
+                        _end        =   int(_location['end']['@position']);
+                if('position' in _location):
+                    '''
+                        {
+                        '@type': 'binding site', 
+                        '@description': 'AMP', 
+                        '@evidence': [3, 5, 6, 9, 13, 14], 
+                        'location': {
+                                        'position': {'@position': 31, '@status': 'certain'}                
+                                    }
+                        }
+                    '''
+                    _begin      =   int(_location['position']['@position'])
+                    _end        =   _begin
+
+                _fn_code    =   hmaps.get_fn_code(_ft_mod)
+                self._update_residue_list(_fn_code,_begin,_end)
+            #print(_ft_type)
+        self._save_residue_annotations();
+
+    def _save_residue_annotations(self):
+        '''
+            
+        '''
+        #print(self._uniprot_id)
+        _fname="%s.rprop"%(self._uniprot_id);
+        _out="#%5s%6s%6s%6s%6s\n"%('Resid','AA','SS','FUNC','MUT');
+        for i in self.RESIDUE_LIST:
+            _out+="%6d%6s%6s%6d%6d\n"%(i.resid,i.aa,i.ss,i.func,i.mut)
+        fileIO.save_file(_fname,_out);
+    def _update_residue_list(self,_fn_code,_begin,_end):
+        '''
+            add safety checks
+
+            resid aa ss func mut
+        '''
+        for i in range(_begin,_end+1,1):
+            _old    =   self.RESIDUE_LIST[i-1];
+            _n_mut  =   _old.mut;   _n_ss=_old.ss; _n_func=_old.func;
+            #print('@  ',_old)
+            if(type(_fn_code)==int):
+                if(_fn_code==1):
+                    if(_old.mut==-1):
+                        _n_mut=1;
+                    elif(_old.mut>=1):
+                        _n_mut+=1;
+                if(_fn_code==0)or(_fn_code>1):
+                    if(_old.func==-1):
+                        _n_func=_fn_code
+                    elif(_old.func>=1):
+                        _n_func=_old.func+_fn_code
+            if(type(_fn_code)==str):
+                _n_ss=_fn_code
+            self.RESIDUE_LIST[i-1]=self._resprop(resid=_old.resid,aa=_old.aa,ss=_n_ss,func=_n_func,mut=_n_mut)
+            #print('#  ',self.RESIDUE_LIST[i-1])
+        #exit()
+
+
+    def _initialize_residue_list(self):
+        _num_aa =   1+(self.RES_LAST-self.RES_FIRST);
+        self._list_sequence=list(self.SEQUENCE);
+
+        if(_num_aa==self.NUM_AA):
+            for i in range(_num_aa):
+                self.RESIDUE_LIST.append(self._resprop(resid=i+1,aa=self._list_sequence[i],ss="-",func=-1,mut=-1));
+        else:
+            self._logger.info('RESIDUE_NUMBERS_MISMATCH : %d %d'%(_num_aa, self.NUM_AA))
     def _get_sequence_details(self):
         '''
             
         '''
-        _data           =   self._get_data(i=17);
+        _data           =   self._get_data('sequence');
         self.NUM_AA     =   int(_data['@length'])
         self.SEQUENCE   =   _data['$']
         self.MOLWT      =   int(_data['@mass'])
@@ -118,13 +207,16 @@ class UniLib(object):
     def _get_ec_id(self):
         '''
             get the ec id
+
+            EC id is not located in section 12
         '''
-        _data       =   self._get_data(i=12);
-        self.EC_ID  =   _data[0]['@id'];
+        _data       =   self._get_data('dbReference');
+        print(_data)
+        self.EC_ID  =   _data['@id'][0];
         self._logger.info('%-25s : %s'%('EC ID',self.EC_ID))
 
     def _get_pdb_list(self):
-        _db_data_list    =   self._get_data(i=12);
+        _db_data_list    =   self._get_data('dbReference');
         for _pdb_data in _db_data_list:
             _d_type =   _pdb_data['@type']
             if(_d_type=='PDB'):
@@ -178,10 +270,13 @@ class UniLib(object):
             self._dict_chains[_chain]=mrr;
             mrr=[]; #reinitialize
 
-
-    def _get_data(self,i=1):
-        k=self._keys[i];
-        data=self._content[k]
+    def _get_data(self,label='sequence'):
+        data="";
+        if(label in self._content):
+            data=self._content[label]
+        else:
+            self._logging.info('%-25s : %s'%('DATA_TYPE_NOT_FOUND',label))
+            exit()
         return data
     def _read_txt(self):
             _unidata    =   fileIO.read_file(self._uni_record);
