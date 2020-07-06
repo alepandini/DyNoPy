@@ -25,7 +25,7 @@
 '''
 import logging
 import dynoIO.fileIO as fileIO
-from dynoTools.sequence_utils import SeqTools
+from dynolib.sequencelib import SeqTools
 import dynoutil.dynoMath as dMath
 import numpy as np
 

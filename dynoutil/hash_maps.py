@@ -287,7 +287,7 @@ def get_ft_code(ft_type,fmt="xml"):
         ft_code =   dict_ft_types[ft_type]
     else:
         print('FT_CODE_NOT_FOUND FOR %s'%(ft_type))
-        exit()
+        ft_code = 0
     return ft_code
 
 def get_fn_code(ft_type,fmt="xml"):
@@ -314,8 +314,9 @@ def get_fn_code(ft_type,fmt="xml"):
     if(ft_type in dict_ft_types):
         fn_code =   dict_ft_types[ft_type]
     else:
-        print('FT_CODE_NOT_FOUND FOR %s'%(ft_type))
-        exit()
+        print('FN_CODE_NOT_FOUND FOR %s'%(ft_type))
+        fn_code = -1
+        
     return fn_code
 
 

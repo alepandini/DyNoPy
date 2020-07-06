@@ -25,7 +25,7 @@
 '''
 import logging
 import dynoutil.options as argParser
-from dynoTools.uniprot import Uniprot
+from dynotools.uniprot import Uniprot
 
 logger="";
 dict_params={};

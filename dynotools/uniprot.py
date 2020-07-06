@@ -28,7 +28,7 @@ import dynoutil.uniutils as utils
 import dynoutil.hash_maps as hmaps
 import os,logging,collections
 
-from dynoTools.uniprotlib import UniLib
+from dynolib.uniprotlib import UniLib
 class Uniprot(object):
     '''
     classdocs

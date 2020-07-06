@@ -25,7 +25,7 @@
 '''
 import logging
 import dynoutil.options as argParser
-from dynoTools.pwie import PWIE
+from dynotools.pwie import PWIE
 
 logger="";
 dict_params={};

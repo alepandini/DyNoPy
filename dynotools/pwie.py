@@ -6,7 +6,7 @@ from itertools import combinations
 import timeit,os,sys,logging
 import dynoIO.fileIO as fileIO
 import dynoIO.fileUtils as fUtils
-import dynoTools.pwie_utils as pwieutils
+import dynolib.pwielib as pwielib
 
 class PWIE(object):
 
@@ -22,7 +22,7 @@ class PWIE(object):
         fUtils.check_dir(self._dir_name);
 
     def _get_pairs(self):
-        self._list_pairs    =   pwieutils.gen_pair_list(self._resi_fst,self._resi_lst,gap=1)
+        self._list_pairs    =   pwielib.gen_pair_list(self._resi_fst,self._resi_lst,gap=1)
         self._logger.info('%-25s : %8d'%('First Residue',self._resi_fst))
         self._logger.info('%-25s : %8d'%('Last  Residue',self._resi_lst))
         self._logger.info('%-25s : %8d'%('NPairs',len(self._list_pairs)))
@@ -42,7 +42,7 @@ class PWIE(object):
         return comm
     def _run_cpptraj(self):
         self._logger.info('%-25s : %8s'%('No. of pair sets',len(self._list_cpp)))
-        pwieutils.run_cpptraj_parallel(self._list_cpp,self._thrd_max,self._dir_name,self._file_lab);
+        pwielib.run_cpptraj_parallel(self._list_cpp,self._thrd_max,self._dir_name,self._file_lab);
 
     def _gen_cpp_command_list(self):
         _pair_count     =   0;	
