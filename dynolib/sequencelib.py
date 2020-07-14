@@ -23,7 +23,7 @@
      along with DyNoPy.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-import dynoIO.fileIO as fileIO
+import dynoio.fileio as fileIO
 import dynoutil.hash_maps as hash_maps
 import logging,collections,h5py,tqdm
 import numpy as np

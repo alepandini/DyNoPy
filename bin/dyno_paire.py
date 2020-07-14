@@ -20,7 +20,7 @@
 import timeit,os,sys
 import multiprocessing as mp
 import dynoutil.dependencies as dependency
-import dynoIO.fileIO as fileIO
+import dynoio.fileio as fileIO
 import dynoutil.options as argParser
 
 def main():

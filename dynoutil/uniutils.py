@@ -26,7 +26,7 @@
 
 import requests as req
 import logging
-import dynoIO.fileIO as fileIO
+import dynoio.fileio as fileIO
 
 url_uniprot="https://www.uniprot.org/uniprot"
 

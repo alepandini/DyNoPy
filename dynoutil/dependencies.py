@@ -23,7 +23,7 @@
      along with DyNoPy.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-import dynoIO.fileUtils as fUtils
+import dynoio.fileutils as fUtils
 import shutil,os,subprocess
 def check_exe(exe_for_search):
     exloc=shutil.which(exe_for_search)

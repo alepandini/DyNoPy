@@ -3,7 +3,7 @@
     @release_date  : $release_date
     @version       : $release_version
     @author        : Sarath Chandra Dantu
-    
+
 
      Copyright (C) 2020 Sarath Chandra Dantu & Alessandro Pandini
 
@@ -23,28 +23,34 @@
      along with DyNoPy.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-import timeit,os,logging
-import dynoio.fileio as fileIO
+import logging
 import dynoutil.options as argParser
+from dynotools.resmatrix import ResMatrix
 
-logger="";
-dict_params={};
+logger="";  dict_params={};
 def initiate_logging():
     global logger
     '''
-        input: coevolution matrix, sequence alignment, fasta sequence
-            -- calculate frequencies of A and B
-            -- generates pairs
-            -- assign weights to each pair 
-                @log frequencies
-                @
+        input: geometrical variable*,folder with interaction energy data, coevolution matrix (optional), first res, last res, number of threads, correlation method, number of replicas
+            -- calculate Rho matrix
+            -- calculate J-Matrix if Coevolution matrix is provided
     '''
     logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.INFO);
-    logger=logging.getLogger('Dyno H5  ')
+    logger=logging.getLogger('Dyno ReMa')
 
 def main():
-    global logger
+    global dict_params,logger
     initiate_logging();
-    args    =   argParser.conv_h5_to_ascii();
-    fileIO.convert_h5_to_ascii(args.h5,args.pair,args.out)
+    args    =   argParser.resma();
+    dict_params['file_coe']     =   args.coe;
+    dict_params['file_gem']     =   args.gem;
+    dict_params['fold_iex']     =   args.fiex;
+    dict_params['resi_fst']     =   int(args.fst)
+    dict_params['resi_lst']     =   int(args.lst)
+    dict_params['num_rep']      =   int(args.nrep)
+    dict_params['file_lab']     =   args.label
+    dict_params['num_thr']      =   int(args.tmax)
+    print('ADD FUNCTION TO PRINT PARAMS')
+    object_rema                 =   ResMatrix();
+    object_rema.manager(dict_params);
 main()

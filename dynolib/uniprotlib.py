@@ -23,7 +23,7 @@
      along with ResPy.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-import dynoIO.fileIO as fileIO
+import dynoio.fileio as fileIO
 import dynoutil.uniutils as utils
 import dynoutil.hash_maps as hmaps
 import os,logging,collections

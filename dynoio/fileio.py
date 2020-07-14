@@ -25,7 +25,7 @@
 '''
 import numpy as np
 import os,logging,h5py
-import dynoIO.fileUtils as fUtils
+import dynoio.fileutils as fUtils
 logger=logging.getLogger('DyNo IO ')
 
 def save_file(fName,data):
@@ -122,3 +122,37 @@ def save_record(fname,record):
     logger.info('%-15s : %s','Saving',fname)
     with open(fname,'wb') as file:
         file.write(record.content)
+
+def read_data_to_matrix(fName,limit=999999999):
+    fUtils.check_file(fName)
+    fOpen=open(fName,'r');
+    fLine=fOpen.readlines();
+
+    ncol=len(fLine[0].split())
+    N=len(fLine);   count=0;
+    if(N<=limit):
+        Array_Data=np.empty([N,ncol],dtype=float)
+    elif(N>limit):
+        Array_Data=np.empty([limit,ncol],dtype=float)
+    for i in range(N):
+        if(i<limit):
+            line=fLine[i].strip().split();
+            for j in range(len(line)):
+                Array_Data[i][j]=float(line[j]);
+            count+=1;
+    return Array_Data
+
+def checkfile(fileName):
+    global logger
+    if(os.path.isfile(fileName))==False:
+        logger.error('%s does not exist',fileName)
+        exit();
+    else:
+        logger.debug('%s exists',fileName)
+def checkfile_with_return(fileName):
+    return os.path.isfile(fileName)
+def checkfile_with_message(fileName,message):
+    global logger
+    if(os.path.isfile(fileName))==False:
+        logger.info('%s does not exist. %s',fileName,message)
+        exit();

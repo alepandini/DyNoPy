@@ -24,7 +24,7 @@
 
 '''
 import logging
-import dynoIO.fileIO as fileIO
+import dynoio.fileio as fileIO
 from dynolib.sequencelib import SeqTools
 import dynoutil.dynoMath as dMath
 import numpy as np

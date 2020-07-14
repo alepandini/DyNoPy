@@ -31,7 +31,7 @@ import os,logging,collections
     generic tools
 '''
 import dynoutil.hash_maps as hmaps
-import dynoIO.fileIO as fileIO
+import dynoio.fileio as fileIO
 '''
     class specific tools
 '''

@@ -24,7 +24,7 @@
 
 '''
 import timeit,os,sys,logging
-import dynoIO.fileIO as fileIO
+import dynoio.fileio as fileIO
 import dynoutil.options as argParser
 from dynotools.sequence import Sequence
 

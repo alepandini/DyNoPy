@@ -153,3 +153,48 @@ def resrank():
                         );
     args = parser.parse_args()
     return args
+def resma():
+    _usage_info="Extract the correlation matrix:\n"
+    _usage_info+="dyno_matrix.py -h\n"
+    _usage_info+="e.g.: dyno_matrix.py -i iexvg/ -f 1 -l 10 -n 1 \n";
+
+    parser = argp.ArgumentParser(prog                   =   "dyno_matrix.py",
+                                 usage="",description   =   _usage_info,
+                                 formatter_class        =   argp.RawTextHelpFormatter
+                                 );
+    parser.add_argument("-c","--coe",
+                        default=None,
+                        help="coevolution matrix file (optional for Rho matrix, mandatory for J-matrix)"
+                        );
+
+    parser.add_argument("-g","--gem",
+                        default=None,
+                        help="File with geometrical variable(s)"
+                        );
+
+    parser.add_argument("-i","--fiex",
+                        default=None,
+                        help="Folder with interaction energy files"
+                        );
+    parser.add_argument("-f","--fst",
+                        default=None,
+                        help="First residue"
+                        );
+    parser.add_argument("-l","--lst",
+                        default=None,
+                        help="last residue"
+                        );
+    parser.add_argument("-n","--nrep",
+                        default=1,
+                        help="Number of replicas"
+                        );
+    parser.add_argument("-o","--label",
+                        default="ResMa",
+                        help="label for output file(s)"
+                        );
+    parser.add_argument("-t","--tmax",
+                        default=1,
+                        help="Number of thread(s). By default will use 80%% of available threads"
+                        );
+    args = parser.parse_args()
+    return args

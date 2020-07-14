@@ -4,8 +4,8 @@ import h5py
 from multiprocessing import Pool,Queue
 from itertools import combinations 
 import timeit,os,sys,logging
-import dynoIO.fileIO as fileIO
-import dynoIO.fileUtils as fUtils
+import dynoio.fileio as fileIO
+import dynoio.fileutils as fUtils
 import dynolib.pwielib as pwielib
 
 class PWIE(object):
