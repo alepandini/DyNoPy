@@ -50,6 +50,7 @@ def main():
     dict_params['num_rep']      =   int(args.nrep)
     dict_params['file_lab']     =   args.label
     dict_params['num_thr']      =   int(args.tmax)
+    dict_params['corr_met']     =   int(args.corr)
     print('ADD FUNCTION TO PRINT PARAMS')
     object_rema                 =   ResMatrix();
     object_rema.manager(dict_params);

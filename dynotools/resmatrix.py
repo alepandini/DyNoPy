@@ -23,13 +23,12 @@
      along with DyNoPy.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-from numba import njit
-from numba import jit
-import os,timeit,sys,glob
+import os,timeit,logging
 import numpy as np
-from scipy import stats
-from sklearn.metrics import mutual_info_score, normalized_mutual_info_score
-import h5py,ray,logging
+
+import dynolib.resmatrixlib as rmlib 
+import dynoio.fileio as fileio
+
 class ResMatrix(object):
     def __init__(self):
         self._initialize();
@@ -39,28 +38,57 @@ class ResMatrix(object):
         self._serial=True;
         
         self._logger    =   logging.getLogger('Dyno ReMa')
+        '''
+            booleans
+        '''
+        self._use_coevolution       =   False
+        '''
+            matrices
+        '''
+        self._matrix_coevolution    =   [];  
+        self._matrix_geometric      =   [];
+        self._matrix_rho            =   [];
+        self._matrix_ie             =   [];
 
-        self._matrix_coevolution  =   [];  
-        self._matrix_geometric    =   [];
-        self._matrix_rho          =   np.zeros((res_last,res_last));
+        '''
+            default values
+        '''
+
         self._lambda_j            =   0.5;
         self._avg_c_score         =   0.0;    
         self._max_c_score         =   1.0;
-
+        '''
+            cut-offs
+        '''
         self._scoe_cut            =   1.0;
         self._rho_cut             =   0.0;
-
+        '''
+            lists
+        '''
         self._list_dist_data      =   []; 
-        
         self._list_ie_data        =   [];
-
+        
     def _get_coev_matrix(self):
         self._logger.info('%-20s : %s'%('STORING','coevolution matrix...'))
-        
+        if(self._dict_params['file_coe']==None):
+            self._use_coevolution    =  False;
+            self._logger.info('%-20s : %s'%('COE',self._dict_params['file_coe']))
+            self._logger.info('%-20s : %s'%('MATRIX TYPE','RHO ONLY'))
+        else:
+            self._logger.info('%-20s : %s'%('COE',self._dict_params['file_coe']))
+            self._logger.info('%-20s : %s'%('MATRIX TYPE','J'))
 
-        self._matrix_coevolution  =   np.loadtxt(self._dict_params['file_coe'])
-        self._avg_c_score         =   np.average(matrix_coevolution);
-        self._max_c_score         =   np.max(matrix_coevolution);
+            self._matrix_coevolution  =   fileio.read_matrix(self._dict_params['file_coe'])
+            if(self._matrix_coevolution.shape[0]>0):
+                self._coe_matrix_stats();
+
+    def _coe_matrix_stats(self):    
+        self._logger.info('%-20s'%('COE PROPERTIES'))
+        self._logger.info('%-20s : %d x %d'%('No. of residues',self._matrix_coevolution.shape[0],self._matrix_coevolution.shape[1]))
+        self._avg_c_score         =   np.average(self._matrix_coevolution);
+        self._max_c_score         =   np.max(self._matrix_coevolution);
+        self._logger.info('%-20s : %.2f'%('Average',self._avg_c_score));
+        self._logger.info('%-20s : %.2f'%('Maximum',self._max_c_score));
 
     def _calc_j_score(self,scaled_coe,rho):
         global scoe_cut,rho_cut,lambda_j
@@ -71,19 +99,10 @@ class ResMatrix(object):
         return jvalue
 
     def _get_geometric_data(self):
-        self._logger.info('%-20s : %s'%('STORING', 'distance data...'))
-        exit()
-        
-
-    def _read_ie_h5(fName):
-        global list_ie_data
-        list_ie_data=[];
-        hf = h5py.File(fName, 'r');
-        n1 = np.array(hf.get('d1'))
-        list_ie_data =  n1[:,0]+n1[:,1];
-        #print(len(list_ie_data)
-        #exit()
-        #print("\n",np.sum(list_ie_data))
+        self._logger.info('%-20s : %s'%('Processing', 'geometrical data...'))
+        self._matrix_geometric  =   fileio.read_data_to_matrix(self._dict_params['file_gem']);
+        self._logger.info('%-20s : %s'%('No. of GEM vectors',self._matrix_geometric.shape))
+    
         
     def _calculate_scaled_c(c_value):
         global avg_c_score
@@ -92,105 +111,54 @@ class ResMatrix(object):
             scaled_c=c_value/avg_c_score;
         return scaled_c
 
-    def _rho_manager(self):
-        global matrix_rho,matrix_coevolution,avg_c_score
+    def _correlation_manager(self):
         
         #out_data="%5s%5s%12s%12s%12s%12s\n"%('Res_a','Res_b','Cab','Sab','Rab','j');
         out_data="%8s%8s%12s%12s%12s\n"%('Res_a','Res_b','Cab','Sab','Rab');
-        print('%-20s : %s'%('CALCULATING','rho...'))
-        start=timeit.default_timer()
-        for i in range(res_first,res_last+1,1):
-            
-            for j in range(res_first,res_last+1,1):
+        if(self._use_coevolution    ==  False):
+            self._logger.info('%-20s : %s'%('Calculating...','Rho Matrix'))
+        else:
+            self._logger.info('%-20s : %s'%('Calculating...','J Matrix'))
+        
+        '''
+            generate the list of tuples with residue pairs (i,j)
+        '''
+
+        _res_first  =   self._dict_params['resi_fst'];
+        _res_last   =   self._dict_params['resi_lst'];
+        _list_of_pairs  =   [];
+        for i in range(_res_first,_res_last+1,1):
+            for j in range(_res_first,_res_last+1,1):
                 if(j>i):
-                    flabel                  =   '%d-%d'%(i,j);
-                    
-                    fname="%s/IE-%d-%d-PRO-%d-CG-2lcb-WT.h5"%(folder_iexvg,i,j,nreplica)
-                    fname="%s/IE-%d-%d-%d-%s.h5"%(folder_iexvg,i,j,nreplica,pdbID)
-                    fname="%s/IE-%d-%d-%s.h5"%(folder_iexvg,i,j,pdbID)
-                    
-                    #fName                   =   "%s/IE-%d-%d-PRO-1-CG-2lcb-WT.dat"%(folder_iexvg,i,j)
-                    print_t='%-20s : %5d %5d'%('PROCESSING_PAIR',i,j);
-                    sys.stdout.write("\r{0}".format(print_t));
-                    sys.stdout.flush()
+                    _list_of_pairs.append((i,j))
+        _corr_params    =   {};
+        _corr_params    =   {1 :   _list_of_pairs,
+                             2 :   self._matrix_geometric,
+                             3 :   self._dict_params['num_rep'],
+                             4 :   self._dict_params['file_lab'],
+                             5 :   self._dict_params['num_thr'],
+                             6 :   self._dict_params['corr_met'],
+                             7 :   self._dict_params['fold_iex']
+                             }
 
-                    rho_value               =   calculate_r(fname)
+        self._list_of_correlations  =   rmlib.correlation_calculator(_corr_params);
+        self._save_list_to_matrix();
 
-                    c_value                 =   matrix_coevolution[i-1][j-1]
-                    matrix_rho[i-1,j-1]     =   rho_value;
-                    matrix_rho[j-1,i-1]     =   rho_value;
-                    
-                    scaled_c                =   calculate_scaled_c(c_value);
-                    #out_data                +=  "%5d%5d%12.5f%12.5f%12.5f%12.5f\n"%(i,j,c_value,scaled_c,rho_value,calc_j_score(scaled_c, rho_value));
-                    out_data                +=  "%8d%8d%12.5f%12.5f%12.5f\n"%(i,j,c_value,scaled_c,rho_value);
-                    #print(out_data)
-                    #exit()
-            if(i==9999):
-                stop=timeit.default_timer()
-                print('\nFinished in : %12.8f (s)'%(stop-start))
-                exit()
-            #break
-        rhotype="PC"
-        if(corr_method==0):
-            rhotype="PC"
-        elif(corr_method==1):
-            rhotype="SC"
-        if(corr_method==2):
+    def _save_list_to_matrix(self):
+        _matrix_correlations    =   np.zeros((self._dict_params['resi_lst'],self._dict_params['resi_lst']));
+        for data in self._list_of_correlations:
+            _i  =   data[0]-1;  _j  =   data[1]-1
+            _matrix_correlations[_i][_j]  =   data[2];
+            _matrix_correlations[_j][_i]  =   data[2];
+        
+        rhotype="PEA";
+        if(self._dict_params['corr_met']    ==  1):
+            rhotype="SPM"
+        elif(self._dict_params['corr_met']    ==  2):
             rhotype="NMI"
-        flabel="%s-%d-%s.mat"%(rhotype,nreplica,pdbID)
-        fwrite=open('J-'+flabel,'w');    
-        fwrite.write(out_data);
-        fwrite.close()
-        #np.savetxt(flabel,matrix_rho,fmt="%12.5f")
-        #np.savetxt(rhotype+'-CoE-2lcb.mat',matrix_coevolution/avg_c_score,fmt="%12.5f")
-
-
-    def calculate_r(fName):
-        rho_value       =   0;
-
-        if(os.path.isfile(fName)==True):
-            read_ie_h5(fName)
-        if(len(list_ie_data)==len(list_dist_data)):
-            rho_value       =   correlation_analysis()
-        else:
-            rho_value=0;
-        return rho_value
-
-    def correlation_analysis():
-        rho_value=0.0
-        if(serial==True):
-            #print('serial')
-            rho_value=serial_calculate_correlation()
-        else:
-            #print('parallel')
-            rho_value=ray.get(parallel_correlation_analysis.remote())
-        #print(" ",rho_value)
-        return rho_value
-    def serial_calculate_correlation():
-        global corr_method
-        global list_dist_data,list_ie_data
-        rho = 0.0;
-        if(corr_method==0):
-            rho=np.corrcoef(list_dist_data,list_ie_data)[0,1];
-        elif(corr_method==1):
-            rho,p=stats.spearmanr(list_dist_data,list_ie_data);
-        elif(corr_method==2):
-            score = normalized_mutual_info_score(list_dist_data,list_ie_data,average_method="arithmetic")
-            rho = np.nan_to_num(score)
-        return rho
-    #@ray.remote
-    def parallel_correlation_analysis():
-        global corr_method
-        global list_dist_data,list_ie_data
-        rho = 0.0;
-        if(corr_method==0):
-            rho=np.corrcoef(list_dist_data,list_ie_data)[0,1];        
-        elif(corr_method==1):
-            rho,p=stats.spearmanr(list_dist_data,list_ie_data);
-        elif(corr_method==2):
-            score = normalized_mutual_info_score(list_dist_data,list_ie_data,average_method="arithmetic")   
-            rho = np.nan_to_num(score)
-        return rho
+        
+        flabel="%s-%s.mat"%(rhotype,self._dict_params['file_lab'])
+        fileio.save_matrix(flabel,_matrix_correlations)
 
     def manager(self,dict_params):
         _start   =   timeit.default_timer();
@@ -199,6 +167,6 @@ class ResMatrix(object):
 
         self._get_geometric_data();
         self._get_coev_matrix();
-        self._rho_manager();
+        self._correlation_manager();
         _stop    =   timeit.default_timer();
-        self._logger.info('\n%-20s : %8.2f (s)'%('FINISHED_IN',stop-start));
+        self._logger.info('%-20s : %.2f (s)'%('FINISHED_IN',_stop-_start));

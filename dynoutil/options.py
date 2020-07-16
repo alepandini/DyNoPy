@@ -196,5 +196,9 @@ def resma():
                         default=1,
                         help="Number of thread(s). By default will use 80%% of available threads"
                         );
+    parser.add_argument("-m","--corr",
+                        default=0,
+                        help="Type of correlation method 0: Pearson; 1: Spearmen; 2: NMI"
+                        );
     args = parser.parse_args()
     return args

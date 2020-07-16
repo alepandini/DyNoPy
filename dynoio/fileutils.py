@@ -24,14 +24,14 @@
 
 '''
 import os,logging
-logger=logging.getLogger('DyNo IO ')
+logger=logging.getLogger('DyNo IO  ')
 def check_file(fName,cue_message=''):
     global logger
     if(os.path.isfile(fName)==False):
         logger.info('%-25s : %s. %s. EXITING','FILE_NOT_FOUND',fName,cue_message)
         exit()
     else:
-        logger.info('%-25s : %s','FILE_FOUND',fName)
+        logger.debug('%-20s : %s','FILE_FOUND',fName)
 def check_exe(eName):
     global logger
     if(os.path.isfile(eName)==False):
@@ -42,4 +42,11 @@ def check_exe(eName):
 def check_dir(dirN):
     if(os.path.isdir(dirN)==False):
         os.system('mkdir %s'%(dirN))
+def checkfile_with_return(fileName):
+    return os.path.isfile(fileName)
 
+def checkfile_with_message(fileName,message):
+    global logger
+    if(os.path.isfile(fileName))==False:
+        logger.info('%s does not exist. %s',fileName,message)
+        exit();

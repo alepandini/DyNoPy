@@ -28,12 +28,18 @@ import os,logging,h5py
 import dynoio.fileutils as fUtils
 logger=logging.getLogger('DyNo IO ')
 
+def read_h5_to_matrix(fName,keyw="d1"):
+    fUtils.check_file(fName)
+    hf      =   h5py.File(fName, 'r')
+    mat     =   np.array(hf.get(keyw))
+    return mat
 def save_file(fName,data):
     f=open(fName,'w')
     f.write(data)
     f.close();
 
 def read_file(filename):
+    fUtils.check_file(filename)
     f=open(filename,'r');
     data="";
     for line in f:
@@ -84,9 +90,13 @@ def read_matrix(matF):
     fUtils.check_file(matF,'')
     matrix=np.loadtxt(matF)
     return matrix
+
 def save_matrix(fName,matrix):
     np.savetxt(fName,matrix,fmt='%10.5f')
+
 def convert_h5_to_ascii(in_h5,pair,out_txt):
+    fUtils.check_file(in_h5);
+
     hf  =   h5py.File(in_h5,'r')
     if(pair in hf):
         data    =   hf.get(pair);
@@ -99,8 +109,10 @@ def convert_h5_to_ascii(in_h5,pair,out_txt):
             for count,d in enumerate(data):
                 out+="%12d%12.5f%12.5f\n"%(count,float(d[0]),float(d[1]))
             save_file(out_txt,out)
+
 def read_fasta(seq_file):
     global logger
+    fUtils.check_file(seq_file)
     FASTA_SEQUENCE="";
     fileObject=open(seq_file,'r');
     for line in fileObject:
@@ -142,17 +154,3 @@ def read_data_to_matrix(fName,limit=999999999):
             count+=1;
     return Array_Data
 
-def checkfile(fileName):
-    global logger
-    if(os.path.isfile(fileName))==False:
-        logger.error('%s does not exist',fileName)
-        exit();
-    else:
-        logger.debug('%s exists',fileName)
-def checkfile_with_return(fileName):
-    return os.path.isfile(fileName)
-def checkfile_with_message(fileName,message):
-    global logger
-    if(os.path.isfile(fileName))==False:
-        logger.info('%s does not exist. %s',fileName,message)
-        exit();
