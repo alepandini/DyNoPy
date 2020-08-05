@@ -162,11 +162,12 @@ def resma():
                                  usage="",description   =   _usage_info,
                                  formatter_class        =   argp.RawTextHelpFormatter
                                  );
+    '''
     parser.add_argument("-c","--coe",
                         default=None,
                         help="coevolution matrix file (optional for Rho matrix, mandatory for J-matrix)"
                         );
-
+    '''
     parser.add_argument("-g","--gem",
                         default=None,
                         help="File with geometrical variable(s)"
@@ -189,7 +190,7 @@ def resma():
                         help="Number of replicas"
                         );
     parser.add_argument("-o","--label",
-                        default="ResMa",
+                        default="Rho",
                         help="label for output file(s)"
                         );
     parser.add_argument("-t","--tmax",
@@ -199,6 +200,36 @@ def resma():
     parser.add_argument("-m","--corr",
                         default=0,
                         help="Type of correlation method 0: Pearson; 1: Spearmen; 2: NMI"
+                        );
+    parser.add_argument("-v","--nvec",
+                        default=1,
+                        help="Number of Geom vectors to use 1 (default) 0"
+                        );
+    args = parser.parse_args()
+    return args
+
+def jmatrix():
+    _usage_info="Calculate the J-matrix:\n"
+    _usage_info+="dyno_jmatrix.py -h\n"
+    _usage_info+="e.g.: dyno_matrix.py -c coevolution.mat -r rho.mat -l label \n";
+
+    parser = argp.ArgumentParser(prog                   =   "dyno_jmatrix.py",
+                                 usage="",description   =   _usage_info,
+                                 formatter_class        =   argp.RawTextHelpFormatter
+                                 );
+    parser.add_argument("-c","--coe",
+                        default=None,
+                        help="coevolution matrix file"
+                        );
+
+    parser.add_argument("-r","--rho",
+                        default=None,
+                        help="File with RHO matrix"
+                        );
+
+    parser.add_argument("-l","--label",
+                        default="Test",
+                        help="Output label"
                         );
     args = parser.parse_args()
     return args

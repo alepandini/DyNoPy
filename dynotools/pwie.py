@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 import numpy as np
-import h5py
 from multiprocessing import Pool,Queue
 from itertools import combinations 
 import timeit,os,sys,logging

@@ -35,13 +35,69 @@ class ResMatrix(object):
         
     def _initialize(self):
         
+        self._serial=True;
         
         self._logger    =   logging.getLogger('Dyno ReMa')
         '''
+            booleans
+        '''
+        self._use_coevolution       =   False
+        '''
             matrices
         '''
+        self._matrix_coevolution    =   [];  
         self._matrix_geometric      =   [];
+        self._matrix_rho            =   [];
+        self._matrix_ie             =   [];
+
+        '''
+            default values
+        '''
+
+        self._lambda_j            =   0.5;
+        self._avg_c_score         =   0.0;    
+        self._max_c_score         =   1.0;
+        '''
+            cut-offs
+        '''
+        self._scoe_cut            =   1.0;
+        self._rho_cut             =   0.0;
+        '''
+            lists
+        '''
+        self._list_dist_data      =   []; 
+        self._list_ie_data        =   [];
         
+    def _get_coev_matrix(self):
+        self._logger.info('%-20s : %s'%('STORING','coevolution matrix...'))
+        if(self._dict_params['file_coe']==None):
+            self._use_coevolution    =  False;
+            self._logger.info('%-20s : %s'%('COE',self._dict_params['file_coe']))
+            self._logger.info('%-20s : %s'%('MATRIX TYPE','RHO ONLY'))
+        else:
+            self._logger.info('%-20s : %s'%('COE',self._dict_params['file_coe']))
+            self._logger.info('%-20s : %s'%('MATRIX TYPE','J'))
+
+            self._matrix_coevolution  =   fileio.read_matrix(self._dict_params['file_coe'])
+            if(self._matrix_coevolution.shape[0]>0):
+                self._coe_matrix_stats();
+
+    def _coe_matrix_stats(self):    
+        self._logger.info('%-20s'%('COE PROPERTIES'))
+        self._logger.info('%-20s : %d x %d'%('No. of residues',self._matrix_coevolution.shape[0],self._matrix_coevolution.shape[1]))
+        self._avg_c_score         =   np.average(self._matrix_coevolution);
+        self._max_c_score         =   np.max(self._matrix_coevolution);
+        self._logger.info('%-20s : %.2f'%('Average',self._avg_c_score));
+        self._logger.info('%-20s : %.2f'%('Maximum',self._max_c_score));
+
+    def _calc_j_score(self,scaled_coe,rho):
+        global scoe_cut,rho_cut,lambda_j
+        jvalue=0.0; rho=np.abs(rho);
+        
+        if(scaled_coe>=scoe_cut)and(rho>=rho_cut):
+            jvalue  =   lambda_j*(scaled_coe/max_c_score)+(1-lambda_j)*rho;
+        return jvalue
+
     def _get_geometric_data(self):
         '''
             get the data in PCA/distance vector 
@@ -51,12 +107,24 @@ class ResMatrix(object):
         #self._matrix_geometric  =   fileio.read_matrix(self._dict_params['file_gem']);
         self._logger.info('%-20s : %s'%('No. of GEM vectors',self._matrix_geometric.shape))
     
+    def _calculate_scaled_c(c_value):
+        global avg_c_score
+        scaled_c=0;
+        if(c_value>0):
+            scaled_c=c_value/avg_c_score;
+        return scaled_c
+
     def _correlation_manager(self):
-        self._logger.info('%-20s : %s'%('Calculating...','Rho-Matrix'))
+        
+        #out_data="%5s%5s%12s%12s%12s%12s\n"%('Res_a','Res_b','Cab','Sab','Rab','j');
+        out_data="%8s%8s%12s%12s%12s\n"%('Res_a','Res_b','Cab','Sab','Rab');
+        if(self._use_coevolution    ==  False):
+            self._logger.info('%-20s : %s'%('Calculating...','Rho Matrix'))
+        else:
+            self._logger.info('%-20s : %s'%('Calculating...','J Matrix'))
         
         '''
-            generates a list of tuples with residue pairs (i,j). Each thread will get a residue tuple and a dictionary
-
+            generate the list of tuples with residue pairs (i,j)
         '''
 
         _res_first  =   self._dict_params['resi_fst'];
@@ -82,27 +150,19 @@ class ResMatrix(object):
 
     def _save_list_to_matrix(self):
         _matrix_correlations    =   np.zeros((self._dict_params['resi_lst'],self._dict_params['resi_lst']));
-        _out_data="#%11s%12s"%('resA','resB');
-        for i in range(len(self._list_of_correlations[0][2])):
-            _s  =   "wvec_%d"%(i+1);
-            _out_data+="%12s"%(_s)
-        _out_data+="\n"
         for data in self._list_of_correlations:
-            _out_data+="%12d%12d"%(data[0],data[1]);
-            for i in data[2]:
-                _out_data+="%12.5f"%(i);
-            _out_data+="\n"
-            #_matrix_correlations[_i][_j]  =   data[2];
-            #_matrix_correlations[_j][_i]  =   data[2];
+            _i  =   data[0]-1;  _j  =   data[1]-1
+            _matrix_correlations[_i][_j]  =   data[2];
+            _matrix_correlations[_j][_i]  =   data[2];
+        
         rhotype="PEA";
         if(self._dict_params['corr_met']    ==  1):
             rhotype="SPM"
         elif(self._dict_params['corr_met']    ==  2):
             rhotype="NMI"
         
-        fname="%s-%s.txt"%(rhotype,self._dict_params['file_lab'])
-        #fileio.save_matrix(flabel,_matrix_correlations)
-        fileio.save_file(fname,_out_data)
+        flabel="%s-%s.mat"%(rhotype,self._dict_params['file_lab'])
+        fileio.save_matrix(flabel,_matrix_correlations)
 
     def manager(self,dict_params):
         _start   =   timeit.default_timer();
@@ -110,6 +170,7 @@ class ResMatrix(object):
         self._dict_params   =   dict_params;
 
         self._get_geometric_data();
+        self._get_coev_matrix();
         self._correlation_manager();
         _stop    =   timeit.default_timer();
         self._logger.info('%-20s : %.2f (s)'%('FINISHED_IN',_stop-_start));

@@ -136,6 +136,9 @@ def save_record(fname,record):
         file.write(record.content)
 
 def read_data_to_matrix(fName,limit=999999999):
+    '''
+        this method on a 600000,11 data file takes 2.2s while np.loadtxt takes 3.845s
+    '''
     fUtils.check_file(fName)
     fOpen=open(fName,'r');
     fLine=fOpen.readlines();

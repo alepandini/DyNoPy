@@ -12,25 +12,48 @@ labF="";
 corr_params =   {}; list_ie_data=[];
 logger=logging.getLogger('DyNo ReMa')
 def calculate_correlation(pair_tuple):
+    '''
+        corr_params [1] : list of pairs
+        corr_params [2] : matrix of geometric data
+        corr_params [4] : file label
+        corr_params [3] : number of replicas
+        corr_params [5] : number of threads
+        corr_params [6] : correlation method 1,2
+        corr_params [7] : folder containing the data
+        corr_params [8] : number of vectors to calculate correlation with
+    '''
     pair_a  =   pair_tuple[0];
     pair_b  =   pair_tuple[1];
     ie_data =   get_ie_data(pair_a,pair_b);
-    ie_len  =   ie_data.shape[0]
+    ie_len  =   ie_data.shape[0];
     di_len  =   corr_params[2].shape[0];
     corr_m  =   corr_params[6];
-    r_coef  =   0.0;
+
+    vec_coef  =   [];
+    max_vecs    =   1;
+
     if(ie_len==di_len):
-        if(corr_m==0):
-            r_coef      =   np.corrcoef(corr_params[2][:,0],ie_data)[0,1];
-        elif(corr_m==1):
-            r_coef,p    =   stats.spearmanr(corr_params[2],ie_data);
-        elif(corr_m==2):
-            score       =   normalized_mutual_info_score(corr_params[2],ie_data,average_method="arithmetic")
-            r_coef      =   np.nan_to_num(score)
+        for i in range(1,corr_params[8]+1):
+            #cor.append(np.corrcoef(d[:,i][:200000],n1[:,1])[0,1])
+            a   =   corr_params[2][:,i]
+            vec_coef.append(get_correlation(a,ie_data));
     if(ie_len!=di_len):
         logger.info('%-20s : %4d %4d %8d %8d'%('LENGTH_MISMATCH_EXITING',pair_a,pair_b,ie_len,di_len))
         exit()
-    return (pair_a,pair_b,r_coef)
+    return (pair_a,pair_b,vec_coef)
+
+
+def get_correlation(a,b):
+    r_coef  =   0.0;
+    corr_m  =   corr_params[6];
+    if(corr_m==0):
+        r_coef      =   np.corrcoef(a,b)[0,1];
+    elif(corr_m==1):
+        r_coef,p    =   stats.spearmanr(a,b);
+    elif(corr_m==2):
+        score       =   normalized_mutual_info_score(a,b,average_method="arithmetic")
+        r_coef      =   np.nan_to_num(score)
+    return r_coef
 
 def get_ie_data(pair_a,pair_b):
     list_ie_data    =   [];
