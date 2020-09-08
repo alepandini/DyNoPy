@@ -69,7 +69,7 @@ class Networks(object):
         if(self._dict_params['file_coe']!=None):
             self._matrix_coevolution  =   fileio.read_matrix(self._dict_params['file_coe'])
             if(self._matrix_coevolution.shape[0]>0):
-                self._matrix_stats();
+                self._matrix_stats(self._matrix_coevolution);
 
     def _get_rho_matrix(self):
         self._logger.info('%-20s : %s'%('STORING','RHO matrix...'))
@@ -85,11 +85,17 @@ class Networks(object):
         _max    =   np.max(_matrix);
         self._logger.info('%-20s : %.2f'%('Average',_avg));
         self._logger.info('%-20s : %.2f'%('Maximum',_max));
-    
+    def _check_matrix_size(self):
+        N_coe   =   self._matrix_coevolution.shape[0];
+        N_rho   =   self._matrix_rho[-1][1];
+        if(N_rho != N_coe):
+            self._logger.error('%-20s : N (COE): %5d , N (RHO): %5d'%("RESIDUE_NUM_MISMATCH_ERROR",N_coe,N_rho))
+            exit()
     def _network_manager(self):
         if(self._dict_params['file_coe']!=None)and(self._dict_params['file_rho']!=None):
+            self._check_matrix_size();
             self._logger.info("J-MATRIX NOT IMPLEMENTED YET")
-        if(self._dict_params['file_rho']!=None):
+        if(self._dict_params['file_coe']==None)and(self._dict_params['file_rho']!=None):
             self._logger.info('CALCULATING NETWORK PROPERTIES')
             nwlib.calculate_network_properties(self._matrix_rho,self._dict_params['file_lab']);
 

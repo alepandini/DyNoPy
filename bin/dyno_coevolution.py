@@ -26,7 +26,7 @@
 import timeit,os,sys
 import multiprocessing as mp
 import dynoutil.dependencies as dependency
-import dynoIO.fileUtils as fUtils
+import dynoio.fileutils as fUtils
 import dynoutil.options as argParser
 
 perf_out="Performance stats...\n";

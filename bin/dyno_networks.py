@@ -41,7 +41,7 @@ def initiate_logging():
 def main():
     global dict_params,logger
     initiate_logging();
-    args    =   argParser.resma();
+    args    =   argParser.jmatrix();
     dict_params['file_coe']     =   args.coe;
     dict_params['file_rho']     =   args.rho;
     dict_params['file_lab']     =   args.label
