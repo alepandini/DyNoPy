@@ -92,9 +92,18 @@ class Networks(object):
             self._logger.error('%-20s : N (COE): %5d , N (RHO): %5d'%("RESIDUE_NUM_MISMATCH_ERROR",N_coe,N_rho))
             exit()
     def _network_manager(self):
+        self._matrix_j  =   [];
         if(self._dict_params['file_coe']!=None)and(self._dict_params['file_rho']!=None):
             self._check_matrix_size();
-            self._logger.info("J-MATRIX NOT IMPLEMENTED YET")
+            nvectors    =   self._matrix_rho.shape[1]-2;
+            self._logger.info('CALCULATING NETWORK PROPERTIES')
+            for i in range(nvectors):
+                vec     =   i+2; 
+                label   =   "%s-v%d"%(self._dict_params['file_lab'],vec);
+                self._logger.info('........ for vector : %5d'%(vec))
+                self._matrix_j  =   nwlib.calculate_jmatrix(self._matrix_rho,self._matrix_coevolution,rcutoff=0.5,coecutoff=1.0,vector_num=vec);
+                nwlib.calculate_network_properties(self._matrix_j,label);
+        
         if(self._dict_params['file_coe']==None)and(self._dict_params['file_rho']!=None):
             self._logger.info('CALCULATING NETWORK PROPERTIES')
             nwlib.calculate_network_properties(self._matrix_rho,self._dict_params['file_lab']);
