@@ -42,9 +42,10 @@ def run_hhblits():
     start = timeit.default_timer()
     fasta="%s.fasta"%(pdbID);	hhr="%s-%d.hhr"%(pdbID,nthreads);	a3m="%s-%d.a3m"%(pdbID,nthreads)
     oa3m="%s.a3m"%(pdbID);
+    print("111")
     ### check if fasta file is present
     fUtils.check_file(fasta);
-    
+    print("222")
     #dbname="uniclust30_2017_10"
     #hh_database="%s/%s/%s"%(hhpath,dbname,dbname)
     ### run hhblits
@@ -81,7 +82,6 @@ def checkmaxthreads():
     threads_max =   mp.cpu_count();
     if(nthreads>threads_max):
         nthreads=round(threads_max*0.8)
-    
 def main():
     global file_aln,file_ccm,pdbID,nthreads,dict_hhv
     args    =   argParser.opts_coevolution();
@@ -90,10 +90,9 @@ def main():
     nthreads=   args.numthreads
     # check if  nthreads set is more than available
     checkmaxthreads()
-
     #check if hhblits and database are installed
     dict_hhv=dependency.check_hhblits(hhdb);
-
+    print("111!")
     # to control output file names
     file_aln="%s.aln"%(pdbID);
     file_ccm="%s.mat"%(pdbID);

@@ -195,7 +195,7 @@ def resma():
                         );
     parser.add_argument("-t","--tmax",
                         default=1,
-                        help="Number of thread(s). By default will use 80%% of available threads"
+                        help="Number of thread(s). By default will use 80% of the available threads"
                         );
     parser.add_argument("-m","--corr",
                         default=0,
