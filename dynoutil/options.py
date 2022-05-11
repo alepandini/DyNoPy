@@ -82,6 +82,11 @@ def conv_h5_to_ascii():
                         default="1-2",
                         help="Pairs to extract. MULTIPLE PAIRS NOT SUPPORTED YET"
                         );
+    parser.add_argument("-n", "--dt",
+                        default=1,
+                        help="Number of points"
+                        );
+
     args = parser.parse_args()
     return args
 
