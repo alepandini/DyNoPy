@@ -35,6 +35,22 @@ def opts_coevolution():
         exit()
         
     return args
+def opts_test():
+    parser = argp.ArgumentParser()
+    parser.add_argument("-i", "--pdbid",help="A pdbID to label all the files.",default="1TST")
+    parser.add_argument("-f", "--firstres",default=1,help="First residue ID")
+    parser.add_argument("-l", "--lastres",default=100,help="Last residue ID")
+    parser.add_argument("-n", "--numdata",default=1000,help="number of data points for interaction energy/geometry vectors")
+    parser.add_argument("-v", "--numvectors",default=1,help="number of geometry vectors")
+    parser.add_argument("-t", "--numthreads",default=1,help="number of threads to use")
+
+    args = parser.parse_args()
+    if(args.pdbid==None):
+        print('Provide pdbid. Exiting')
+        exit()
+        
+    return args
+
 def opts_aln_analysis():
     _usage_info="Sequence analysis tool helps you analyse the following: \n FASTA \n coevolution matrix."
     parser = argp.ArgumentParser(prog                   =   "dyno_aln_analysis.py",

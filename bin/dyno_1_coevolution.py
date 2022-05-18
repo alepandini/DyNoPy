@@ -90,16 +90,13 @@ def main():
     checkmaxthreads()
     #check if hhblits and database are installed
     dict_hhv=dependency.check_hhblits(hhdb);
-    print("111!")
     # to control output file names
     file_aln="%s.aln"%(pdbID);
     file_ccm="%s.mat"%(pdbID);
-    
     #run hhblits+tools
     run_hhblits()
     #run CCMpred
     run_ccmpred_gpu()
-    
     print (perf_out)
 
 main()
