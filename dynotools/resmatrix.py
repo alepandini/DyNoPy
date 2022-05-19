@@ -25,7 +25,7 @@
 '''
 import os,timeit,logging
 import numpy as np
-
+import dynolib.pwielib as pwielib
 import dynolib.resmatrixlib as rmlib 
 import dynoio.fileio as fileio
 
@@ -34,8 +34,6 @@ class ResMatrix(object):
         self._initialize();
         
     def _initialize(self):
-        
-        
         self._logger    =   logging.getLogger('Dyno ReMa')
         '''
             matrices
@@ -58,14 +56,14 @@ class ResMatrix(object):
             generates a list of tuples with residue pairs (i,j). Each thread will get a residue tuple and a dictionary
 
         '''
-
         _res_first  =   self._dict_params['resi_fst'];
         _res_last   =   self._dict_params['resi_lst'];
-        _list_of_pairs  =   [];
-        for i in range(_res_first,_res_last+1,1):
-            for j in range(_res_first,_res_last+1,1):
-                if(j>i):
-                    _list_of_pairs.append((i,j))
+        _list_of_pairs  =   pwielib.gen_pair_list(_res_first,_res_last,gap=1)
+        #for i in range(_res_first,_res_last+1,1):
+        #    for j in range(_res_first,_res_last+1,1):
+        #        if(j>i):
+        #            _list_of_pairs.append((i,j))
+
         _corr_params    =   {};
         _corr_params    =   {1 :   _list_of_pairs,
                              2 :   self._matrix_geometric,
@@ -108,7 +106,6 @@ class ResMatrix(object):
         _start   =   timeit.default_timer();
         
         self._dict_params   =   dict_params;
-
         self._get_geometric_data();
         self._correlation_manager();
         _stop    =   timeit.default_timer();

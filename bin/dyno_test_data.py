@@ -38,6 +38,7 @@ folname="iedata"
 logger=""
 numdata=1000; pdbID="1TST";
 nthreads=4; res_first=1; res_last=100;
+stddev=20;
 def initiate_logging():
     global logger
     '''
@@ -70,8 +71,8 @@ def gen_pwie_pair(pair):
     global numdata,pdbID,logger
     out="";
     for i in range(numdata):
-        a=np.random.normal()
-        b=np.random.normal()
+        a=np.random.normal(scale=stddev)
+        b=np.random.normal(scale=stddev)
         out+="%12.2f %12.2f %12.2f\n"%(a,b,a+b)
     datF="%s/IE-%d-%d-%s.dat"%(folname,pair[0],pair[1],pdbID)
     outh5="%s/IE-%d-%d-%s.h5"%(folname,pair[0],pair[1],pdbID)
@@ -104,7 +105,7 @@ def generate_numvec():
     for i in range(numdata):
         out+="%12d"%(i+1)
         for j in range(numvectors):
-            out+="%12.2f"%(np.random.normal())
+            out+="%12.2f"%(np.random.normal(scale=stddev))
         out+="\n"
     f=open("Vectors-%s.dat"%(pdbID),'w')
     f.write(out)

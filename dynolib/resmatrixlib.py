@@ -61,9 +61,11 @@ def get_ie_data(pair_a,pair_b):
         IE-1-32-R1-CG-2gdn.h5
     '''
     for i in range(1,corr_params[3]+1):
-        fname_ie="%s/IE-%d-%d-R%d-CG-%s.h5"%(corr_params[7],pair_a,pair_b,i,corr_params[4])
+        fname_ie="%s/IE-%d-%d-%s.h5"%(corr_params[7],pair_a,pair_b,corr_params[4])
         if(futils.checkfile_with_return(fname_ie)==True):
             ie_matrix   =   fileio.read_h5_to_matrix(fname_ie);
+
+            # calculating interaction energy by adding VdW+Elec
             ie          =   np.add(ie_matrix[:,0],ie_matrix[:,1])
             for j in range(len(ie)):
                 list_ie_data.append(ie[j]);

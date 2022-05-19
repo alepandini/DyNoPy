@@ -52,7 +52,6 @@ def main():
     dict_params['num_thr']      =   int(args.tmax)
     dict_params['corr_met']     =   int(args.corr)
     dict_params['corr_vec']     =   int(args.nvec);
-    print('ADD FUNCTION TO PRINT PARAMS')
     object_rema                 =   ResMatrix();
     object_rema.manager(dict_params);
 main()
