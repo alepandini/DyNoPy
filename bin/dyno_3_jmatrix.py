@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.9
 '''
     @release_date  : $release_date
     @version       : $release_version
@@ -25,7 +25,7 @@
 '''
 import logging
 import dynoutil.options as argParser
-from dynotools.resmatrix import ResMatrix
+from dynotools.jmatrix import JMatrix
 
 logger="";  dict_params={};
 def initiate_logging():
@@ -41,18 +41,14 @@ def initiate_logging():
 def main():
     global dict_params,logger
     initiate_logging();
-    args    =   argParser.resma();
-    #dict_params['file_coe']     =   args.coe;
-    dict_params['file_gem']     =   args.gem;
-    dict_params['fold_iex']     =   args.fiex;
-    dict_params['resi_fst']     =   int(args.fst)
-    dict_params['resi_lst']     =   int(args.lst)
-    dict_params['num_rep']      =   int(args.nrep)
-    dict_params['file_lab']     =   args.label
-    dict_params['num_thr']      =   int(args.tmax)
-    dict_params['corr_met']     =   int(args.corr)
-    dict_params['corr_vec']     =   int(args.nvec);
-    print('ADD FUNCTION TO PRINT PARAMS')
-    object_rema                 =   ResMatrix();
-    object_rema.manager(dict_params);
+    args    =   argParser.jmatrix();
+    dict_params['file_coe']     =   args.coe;
+    dict_params['file_rho']     =   args.rho;
+    dict_params['file_jmat']    =   args.out;
+    dict_params['lambda']       =   float(args.dlambda)
+    dict_params['scoe']         =   args.scalescore
+    dict_params['rhocutoff']    =   float(args.rhocutoff)
+    object_jma                 =   JMatrix();
+    object_jma.manager(dict_params);
+
 main()

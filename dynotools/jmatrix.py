@@ -29,7 +29,7 @@ import numpy as np
 import dynolib.resmatrixlib as rmlib 
 import dynoio.fileio as fileio
 
-class ResMatrix(object):
+class JMatrix(object):
     def __init__(self):
         self._initialize();
         
@@ -37,7 +37,7 @@ class ResMatrix(object):
         
         self._serial=True;
         
-        self._logger    =   logging.getLogger('Dyno ReMa')
+        self._logger    =   logging.getLogger('Dyno JMAT')
         '''
             booleans
         '''
@@ -46,9 +46,10 @@ class ResMatrix(object):
             matrices
         '''
         self._matrix_coevolution    =   [];  
-        self._matrix_geometric      =   [];
         self._matrix_rho            =   [];
-        self._matrix_ie             =   [];
+        self._dict_rho_data         =   {};
+        self._dict_J_data           =   {};
+
 
         '''
             default values
@@ -62,115 +63,83 @@ class ResMatrix(object):
         '''
         self._scoe_cut            =   1.0;
         self._rho_cut             =   0.0;
-        '''
-            lists
-        '''
-        self._list_dist_data      =   []; 
-        self._list_ie_data        =   [];
         
     def _get_coev_matrix(self):
         self._logger.info('%-20s : %s'%('STORING','coevolution matrix...'))
-        if(self._dict_params['file_coe']==None):
-            self._use_coevolution    =  False;
-            self._logger.info('%-20s : %s'%('COE',self._dict_params['file_coe']))
-            self._logger.info('%-20s : %s'%('MATRIX TYPE','RHO ONLY'))
-        else:
-            self._logger.info('%-20s : %s'%('COE',self._dict_params['file_coe']))
-            self._logger.info('%-20s : %s'%('MATRIX TYPE','J'))
+        self._matrix_coevolution  =   fileio.read_matrix(self._dict_params['file_coe'])
+        if(self._matrix_coevolution.shape[0]>0):
+            self._coe_matrix_stats();
+        
+        self._calculate_scaled_matrix();
 
-            self._matrix_coevolution  =   fileio.read_matrix(self._dict_params['file_coe'])
-            if(self._matrix_coevolution.shape[0]>0):
-                self._coe_matrix_stats();
+    def _get_rho_matrix(self):
+        self._logger.info('%-20s : %s'%('STORING','dynamics matrix...'))
+        self._max_scaled_coe=np.max(self._scaled_matrix)
+
+        self._out_j="%12s%12s%12s%12s"%('Res_a','Res_b','Cab','Sab');
+        #self._out_coe="%8s%8s%12s%12s%12s\n"%('Res_a','Res_b','Cab','Sab','Rab');
+
+        #self._matrix_rho  =   fileio.read_matrix(self._dict_params['file_rho'])
+        self._rho_data=open(self._dict_params['file_rho']).readlines()
+
+    def _calculate_j_score(self):
+        self._logger.info('%-20s'%('Calculating J-matrix....'))
+        self._logger.info("%-15s : %s"%("Lambda",self._dict_params['lambda']))
+        self._logger.info("%-15s : %s"%("Cut-off Rho",self._dict_params['rhocutoff']))
+        self._logger.info("%-15s : %s"%("Scaling Coevolution",self._dict_params['scoe']))
+        self._logger.info("%-15s : %s"%("Output File",self._dict_params['file_jmat']))
+     
+        count=1
+        for i in (self._rho_data[0].split()[3:]):
+            self._out_j+="%12s"%("J_"+"Vec_"+"%d"%(count))
+            count+=1
+        self._out_j+="\n"
+
+        self._dict_rho_data={}
+        for i in range(1,len(self._rho_data)):
+            line_data=self._rho_data[i].strip().split()
+            res1=int(line_data[0]); res2=int(line_data[1])
+
+            i_key="%d-%d"%(res1,res2)
+            i_scoe=self._scaled_matrix[res1-1,res2-1]
+            i_coe=self._matrix_coevolution[res1-1,res2-1]
+            self._out_j+="%12d%12d%12.2f%12.2f"%(res1,res2,i_coe,i_scoe)
+            rho_values=[];
+            for j in range(2,len(line_data)):
+                j_rho=float(line_data[j])
+                self._out_j+="%12.2f"%(self._calc_j_score(i_scoe,j_rho))
+                rho_values.append(float(line_data[j]))
+            self._out_j+="\n"
+            self._dict_rho_data[i_key]=rho_values
+        fileio.save_file(self._dict_params['file_jmat'],self._out_j)
+    def _calc_j_score(self,scaled_coe,rho):
+        jvalue=0.0; rho=np.abs(rho);
+        if(scaled_coe>=1)and(rho>=self._dict_params["rhocutoff"]):
+            jvalue  =   self._dict_params["lambda"]*(scaled_coe)+(1-self._dict_params["lambda"])*rho;
+        return jvalue
 
     def _coe_matrix_stats(self):    
         self._logger.info('%-20s'%('COE PROPERTIES'))
         self._logger.info('%-20s : %d x %d'%('No. of residues',self._matrix_coevolution.shape[0],self._matrix_coevolution.shape[1]))
         self._avg_c_score         =   np.average(self._matrix_coevolution);
         self._max_c_score         =   np.max(self._matrix_coevolution);
+
         self._logger.info('%-20s : %.2f'%('Average',self._avg_c_score));
         self._logger.info('%-20s : %.2f'%('Maximum',self._max_c_score));
 
-    def _calc_j_score(self,scaled_coe,rho):
-        global scoe_cut,rho_cut,lambda_j
-        jvalue=0.0; rho=np.abs(rho);
-        
-        if(scaled_coe>=scoe_cut)and(rho>=rho_cut):
-            jvalue  =   lambda_j*(scaled_coe/max_c_score)+(1-lambda_j)*rho;
-        return jvalue
+    def _calculate_scaled_matrix(self):
+        self._scaled_matrix=self._matrix_coevolution;
+        if(self._dict_params["scoe"]==True):
+            self._scaled_matrix=self._matrix_coevolution/np.average(self._matrix_coevolution)
 
-    def _get_geometric_data(self):
-        '''
-            get the data in PCA/distance vector 
-        '''
-        self._logger.info('%-20s : %s'%('Processing', 'geometrical data...'))
-        self._matrix_geometric  =   fileio.read_data_to_matrix(self._dict_params['file_gem']);
-        #self._matrix_geometric  =   fileio.read_matrix(self._dict_params['file_gem']);
-        self._logger.info('%-20s : %s'%('No. of GEM vectors',self._matrix_geometric.shape))
-    
-    def _calculate_scaled_c(c_value):
-        global avg_c_score
-        scaled_c=0;
-        if(c_value>0):
-            scaled_c=c_value/avg_c_score;
-        return scaled_c
-
-    def _correlation_manager(self):
-        
-        #out_data="%5s%5s%12s%12s%12s%12s\n"%('Res_a','Res_b','Cab','Sab','Rab','j');
-        out_data="%8s%8s%12s%12s%12s\n"%('Res_a','Res_b','Cab','Sab','Rab');
-        if(self._use_coevolution    ==  False):
-            self._logger.info('%-20s : %s'%('Calculating...','Rho Matrix'))
-        else:
-            self._logger.info('%-20s : %s'%('Calculating...','J Matrix'))
-        
-        '''
-            generate the list of tuples with residue pairs (i,j)
-        '''
-
-        _res_first  =   self._dict_params['resi_fst'];
-        _res_last   =   self._dict_params['resi_lst'];
-        _list_of_pairs  =   [];
-        for i in range(_res_first,_res_last+1,1):
-            for j in range(_res_first,_res_last+1,1):
-                if(j>i):
-                    _list_of_pairs.append((i,j))
-        _corr_params    =   {};
-        _corr_params    =   {1 :   _list_of_pairs,
-                             2 :   self._matrix_geometric,
-                             3 :   self._dict_params['num_rep'],
-                             4 :   self._dict_params['file_lab'],
-                             5 :   self._dict_params['num_thr'],
-                             6 :   self._dict_params['corr_met'],
-                             7 :   self._dict_params['fold_iex'],
-                             8 :   self._dict_params['corr_vec']
-                             }
-
-        self._list_of_correlations  =   rmlib.correlation_calculator(_corr_params);
-        self._save_list_to_matrix();
-
-    def _save_list_to_matrix(self):
-        _matrix_correlations    =   np.zeros((self._dict_params['resi_lst'],self._dict_params['resi_lst']));
-        for data in self._list_of_correlations:
-            _i  =   data[0]-1;  _j  =   data[1]-1
-            _matrix_correlations[_i][_j]  =   data[2];
-            _matrix_correlations[_j][_i]  =   data[2];
-        
-        rhotype="PEA";
-        if(self._dict_params['corr_met']    ==  1):
-            rhotype="SPM"
-        elif(self._dict_params['corr_met']    ==  2):
-            rhotype="NMI"
-        
-        flabel="%s-%s.mat"%(rhotype,self._dict_params['file_lab'])
-        fileio.save_matrix(flabel,_matrix_correlations)
 
     def manager(self,dict_params):
         _start   =   timeit.default_timer();
         
         self._dict_params   =   dict_params;
 
-        self._get_geometric_data();
         self._get_coev_matrix();
-        self._correlation_manager();
+        self._get_rho_matrix();
+        self._calculate_j_score()
         _stop    =   timeit.default_timer();
         self._logger.info('%-20s : %.2f (s)'%('FINISHED_IN',_stop-_start));

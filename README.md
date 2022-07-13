@@ -1,4 +1,26 @@
+# mjolnir
+
+Pipeline tools
+
+Link to uniprot databases
+	- http://gwdu111.gwdg.de/~compbiol/uniclust/2022_02/
+
+Sequence alignment
+- hhsuite https://github.com/soedinglab/hh-suite
+
+Coevolution matrix
+- ccmpred https://github.com/soedinglab/CCMpred
+- metapsicov https://github.com/psipred/metapsicov
+- plmDCA https://github.com/pagnani/PlmDCA
+
+Secondary structure calculation
+
+PsiPRED:
+- https://github.com/psipred/psipred
+
 # DyNoPy (Dynamics based Network cOmparisons in Python)
+
+
 ## **What does it do?**
 This package will help you generate:
 1. Coevolution matrices from FASTA sequences
