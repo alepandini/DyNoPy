@@ -130,4 +130,5 @@ dmypy.json
 localhistory
 gitcommit.sh
 dyno_template.py
-
+.swp
+.pyc

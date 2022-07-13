@@ -1,0 +1,17 @@
+package:
+        name: dynopy
+        version: "1.0"
+        #source:
+        #git_url: git@github.com:alepandini/DyNoPy.git
+        #git_depth: 1
+requirements:
+  build:
+    - python>=3.9
+    - argparse # [py26]
+    - six 
+    - logging
+    - h5py
+    - tqdm
+    - scikit-learn
+    - scipy
+

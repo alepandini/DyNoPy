@@ -96,8 +96,8 @@ def save_matrix(fName,matrix):
 
 def convert_h5_to_ascii(in_h5,pair,out_txt):
     fUtils.check_file(in_h5);
-
     hf  =   h5py.File(in_h5,'r')
+    #pair="d"
     if(pair in hf):
         data    =   hf.get(pair);
         data    =   np.array(data);
@@ -109,7 +109,9 @@ def convert_h5_to_ascii(in_h5,pair,out_txt):
             for count,d in enumerate(data):
                 out+="%12d%12.5f%12.5f\n"%(count,float(d[0]),float(d[1]))
             save_file(out_txt,out)
-
+   if(pair in hf:
+           print("crap")
+   #    logger.info("Key %s not found in the h5 file. No output file will be generated"%(pair))
 def read_fasta(seq_file):
     global logger
     fUtils.check_file(seq_file)

@@ -1,0 +1,20 @@
+name: dynopy
+dependencies:
+  - python>=3.9
+  - pip
+  - pip:
+    - numpy
+    - matplotlib
+    - h5py
+    - scikit-learn
+    - mdanalysis 
+    - jupyterlab
+    - argparse # [py26]
+    - six
+    - logging
+    - tqdm
+    - scipy
+    - collections
+    - multiprocessing
+    - threading
+    - igraph
