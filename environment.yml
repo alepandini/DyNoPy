@@ -9,12 +9,8 @@ dependencies:
     - scikit-learn
     - mdanalysis 
     - jupyterlab
-    - argparse # [py26]
+    - argparse
     - six
-    - logging
     - tqdm
     - scipy
-    - collections
-    - multiprocessing
-    - threading
     - igraph

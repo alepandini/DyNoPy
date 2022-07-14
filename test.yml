@@ -1,0 +1,34 @@
+name: dynopy
+dependencies:
+  - python=3.9
+  - numpy
+  - matplotlib
+  - h5py
+  - scikit-learn
+  - mdanalysis
+  - jupyterlab
+  - argparse
+  - logging
+  - tqdm
+  - scipy
+  - collections
+  - multiprocessing
+  - threading
+  - igraph
+  - pip
+  - pip:
+    - numpy
+    - matplotlib
+    - h5py
+    - scikit-learn
+    - mdanalysis 
+    - jupyterlab
+    - argparse
+    - six
+    - logging
+    - tqdm
+    - scipy
+    - collections
+    - multiprocessing
+    - threading
+    - igraph
