@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 '''
     @release_date  : $release_date
     @version       : $release_version
@@ -110,11 +110,6 @@ def convert_h5_to_ascii(in_h5,pair,out_txt):
             for count,d in enumerate(data):
                 out+="%12d%12.5f%12.5f\n"%(count,float(d[0]),float(d[1]))
             save_file(out_txt,out)
-<<<<<<< HEAD
-   if(pair in hf:
-           print("crap")
-   #    logger.info("Key %s not found in the h5 file. No output file will be generated"%(pair))
-=======
 def compress_h5(in_h5,pair,out_txt,dt=1):
     fUtils.check_file(in_h5);
     out=[]
@@ -132,7 +127,6 @@ def saveh5(outh5,npdata):
     hf.create_dataset('d1',data=npdata,compression="gzip");
     hf.close()
 
->>>>>>> 09559db60d8ec66bc9e6ea2a1b294c95e53195ce
 def read_fasta(seq_file):
     global logger
     fUtils.check_file(seq_file)

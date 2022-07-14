@@ -1,4 +1,4 @@
-#!/usr/bin/python3.9
+#!/usr/bin/python
 '''
     @release_date  : $release_date
     @version       : $release_version
