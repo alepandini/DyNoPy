@@ -110,12 +110,18 @@ cmake_install()
 	fi
 
 }
+lib_install()
+{
+	sudo apt install libmsgpack-dev libjansson-dev uuid-dev openmpi-bin pkg-config
+}
 #
 # install order
 # cmake (comment this function if you have cmake 3.17 need sudo access)
 # ccmpred (dependent on cmake 3.17)
 # hh-suite
 #
+lib_install
+exit
 cmake_install
 cd $dir_main
 ccm_install

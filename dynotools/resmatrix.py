@@ -98,7 +98,7 @@ class ResMatrix(object):
         elif(self._dict_params['corr_met']    ==  2):
             rhotype="NMI"
         
-        fname="%s-%s.txt"%(rhotype,self._dict_params['file_lab'])
+        fname="%s-%s.txt"%(rhotype,self._dict_params['file_out'])
         #fileio.save_matrix(flabel,_matrix_correlations)
         fileio.save_file(fname,_out_data)
 

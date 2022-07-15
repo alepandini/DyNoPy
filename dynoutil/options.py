@@ -25,6 +25,12 @@
 '''
 import argparse as argp
 def opts_coevolution():
+    _usage_info="Run coevolution analysis using hhblits and ccmpred"
+
+    parser = argp.ArgumentParser(prog                   =   "dyno_1_coevolution.py",
+                                 usage="",description   =   _usage_info,
+                                 formatter_class        =   argp.RawTextHelpFormatter
+                                 );
     parser = argp.ArgumentParser()
     parser.add_argument("-i", "--pdbid",help="pdbID; NOTE: expects pdbID.fasta file in the directory")
     parser.add_argument("-d", "--database",default="UniRef30_2020_02",help="uniprot database ; Supports only UniRef30_2020_02")
@@ -178,16 +184,20 @@ def resrank():
     return args
 def resma():
     _usage_info="Extract the correlation matrix\n"
-    _usage_info+="dyno_matrix.py -h\n"
-    _usage_info+="e.g.: dyno_matrix.py -i iexvg -f 1 -l 10 -n 1\n";
-    #parser = argp.ArgumentParser(prog                   =   "dyno_matrix.py",usage="",description   =   _usage_info,formatter_class        =   argp.RawTextHelpFormatter);
-    parser = argp.ArgumentParser()
+    _usage_info+="dyno_2_dmatrix.py -h\n"
+    _usage_info+="e.g.: dyno_2_dmatrix.py -i iexvg -f 1 -l 10 -n 1 -e label_of_energy_files\n";
+    parser = argp.ArgumentParser(prog                   =   "dyno_matrix.py",
+                                usage                   =   "",
+                                description             =   _usage_info,
+                                formatter_class         =   argp.RawTextHelpFormatter
+                                );
     parser.add_argument("-g","--gem",help="File with geometrical variables");
     parser.add_argument("-i","--fiex",help="Folder with interaction energy files iedata/");
     parser.add_argument("-f","--fst",help="First residue",default=1);
     parser.add_argument("-l","--lst",help="last residue",default=10);
     parser.add_argument("-n","--nrep",help="Number of replicas [NOT FUNCTIONAL]",default=1);
-    parser.add_argument("-o","--label",help="label for output files");
+    parser.add_argument("-e","--fene",help="energy files label used during PWIE calculation");
+    parser.add_argument("-o","--label",help="label for output file");
     parser.add_argument("-t","--tmax",help="Number of threads. By default will use 80%% of the available threads");
     parser.add_argument("-m","--corr",help="Type of correlation method 0: Pearson; 1: Spearmen; 2: NMI",default=0);
     parser.add_argument("-v","--nvec",help="Number of Geom vectors to use 1...N default 1",default=1);
@@ -196,8 +206,8 @@ def resma():
 
 def jmatrix():
     _usage_info="Calculate the J-matrix:\n"
-    _usage_info+="dyno_jmatrix.py -h\n"
-    _usage_info+="e.g.: dyno_matrix.py -c coevolution.mat -r rho.mat -l 0.5 -o label\n";
+    _usage_info+="dyno_3_jmatrix.py -h\n"
+    _usage_info+="e.g.: dyno_matrix.py -c coevolution.mat -r rho.mat -l 0.5 -o label \n";
 
     parser = argp.ArgumentParser(prog                   =   "dyno_jmatrix.py",
                                  usage="",description   =   _usage_info,
@@ -234,3 +244,4 @@ def jmatrix():
 
     args = parser.parse_args()
     return args
+
