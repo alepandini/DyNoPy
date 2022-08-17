@@ -32,13 +32,13 @@ def check_file(fName,cue_message=''):
         exit()
     else:
         logger.debug('%-20s : %s','FILE_FOUND',fName)
-def check_exe(eName):
-    global logger
-    if(os.path.isfile(eName)==False):
-        logger.info('%-25s : %s. EXITING','EXE_NOT_FOUND',eName)
-        exit()
-    else:
-        logger.info('%-25s : %s','EXE_FOUND',eName)
+#def check_exe(eName):
+#    global logger
+#    if(os.path.isfile(eName)==False):
+#        logger.info('%-25s : %s. EXITING','EXE_NOT_FOUND',eName)
+#        exit()
+#    else:
+#        logger.info('%-25s : %s','EXE_FOUND',eName)
 def check_dir(dirN):
     if(os.path.isdir(dirN)==False):
         os.system('mkdir %s'%(dirN))

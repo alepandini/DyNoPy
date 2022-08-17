@@ -25,35 +25,49 @@
 '''
 import dynoio.fileutils as fUtils
 import shutil,os,subprocess
+import logging
+logger=""
+logger=logging.getLogger('Dyno Chks')
+
 def check_exe(exe_for_search):
+    global logger
     exloc=shutil.which(exe_for_search)
     if(exloc==None):
-        print('EXE_NOT_FOUND %s'%(exe_for_search))
+        logger.error('EXE_NOT_FOUND %s'%(exe_for_search))
         exit()
     else:
-        print('EXE_FOUND     @ %s'%(exloc))
+        logger.info('EXE_FOUND     @ %s'%(exloc))
     #rc=subprocess.getoutput("which %s"%(exe_for_search))
 def check_hhblits(dbname):
+    global logger
     hhlib   =   os.getenv("HHLIB")
     if(hhlib==None):
-        print('HHLIB variable not set. HHLIB should point to hh-suite directory')
-        print('DyNoPy expects:\n\thhblits and hhfilter @ $HHLIB/build/bin/')
-        print('\t uniprot files @ $HHLIB\database')
-        print('Exiting.')
+        logger.error("HHLIB : %s"%(hhlib))
+        logger.error('HHLIB variable not set. HHLIB should point to hh-suite directory')
+        logger.error('DyNoPy expects:\n\thhblits and hhfilter @ $HHLIB/build/bin/')
+        logger.error('\t uniprot files @ $HHLIB\database')
+        logger.error('Exiting.')
         exit()
-    
-    dict_hhv={};
-    dict_hhv['hhlib']   =   hhlib;
-    dict_hhv['hhblits'] =   hhlib+"/build/bin/hhblits";
-    dict_hhv['hhfilter']=   hhlib+"/build/bin/hhfilter";
 
-    fUtils.check_exe(dict_hhv['hhblits'])
-    fUtils.check_exe(dict_hhv['hhfilter'])
+    dict_hhv={};
+    dict_hhv['hhlib']       =   hhlib;
+    #dict_hhv['hhblits']     =   hhlib+"/build/bin/hhblits";
+    #dict_hhv['hhfilter']    =   hhlib+"/build/bin/hhfilter";
+    dict_hhv['hhblits']     =   shutil.which("hhblits");
+    dict_hhv['hhfilter']    =   shutil.which("hhfilter")
+
+    check_exe(dict_hhv['hhblits'])
+    check_exe(dict_hhv['hhfilter'])
     check_exe("ccmpred")
     '''
         add a more thorough check of the database folder
     '''
     file_hhdb="%s/database/%s/%s_a3m.ffdata"%(hhlib,dbname,dbname)
+    fol_hhdb="%s/database/%s"%(hhlib,dbname)
+    if(os.path.isdir(fol_hhdb)==False):
+        logger.error("%s does not contain the %s database in %s."%(hhlib,dbname,fol_hhdb))
+        logger.error("Please check if the database has been downloaded/named properly. Exiting")
+        exit()
     fUtils.check_file(file_hhdb,cue_message=dbname+" files not found. Download the files again.")
     dict_hhv['hhdb']="%s/database/%s/%s"%(hhlib,dbname,dbname)
     return dict_hhv
