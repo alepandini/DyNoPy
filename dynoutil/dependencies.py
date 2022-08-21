@@ -81,7 +81,7 @@ def check_hhdb(hhlib,dbname):
     logger.info("%-25s : %s"%("Searching for database",dbname))
     fol_db      =   "%s/database"%(hhlib)
     fol_hhdb    =   "%s/%s"%(fol_db,dbname)
-    file_hhdb   =   "%s/%s_a3m.ffdata"%(fol_db,dbname)
+    file_hhdb   =   "%s/%s_a3m.ffdata"%(fol_hhdb,dbname)
     
     check_folder(fol_db)
     check_folder(fol_hhdb)
