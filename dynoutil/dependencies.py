@@ -42,6 +42,7 @@ def check_hhblits(dbname):
     hhlib   =   os.getenv("HHLIB")
     check_executables(hhlib)
     check_hhdb(hhlib,dbname)
+    return dict_hhv
 
 def check_executables(hhlib):
     global logger,dict_hhv
@@ -95,4 +96,4 @@ def check_hhdb(hhlib,dbname):
 
     fUtils.check_file(file_hhdb,cue_message=dbname+" files not found. Download the files again.")
     dict_hhv['hhdb']="%s/database/%s/%s"%(hhlib,dbname,dbname)
-    return dict_hhv
+    
