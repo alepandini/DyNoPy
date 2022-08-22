@@ -28,7 +28,7 @@ import shutil,os,subprocess
 import logging,glob
 logger=""
 logger=logging.getLogger('Dyno Chks')
-
+dict_hhv={}
 def check_exe(exe_for_search):
     global logger
     exloc=shutil.which(exe_for_search)
@@ -44,7 +44,7 @@ def check_hhblits(dbname):
     check_hhdb(hhlib,dbname)
 
 def check_executables(hhlib):
-    global logger
+    global logger,dict_hhv
     logger.info("%-25s : %s"%("HHLIB",hhlib))
     logger.info('DyNoPy expects hhblits and hhfilter @ $HHLIB/build/bin/')
     logger.info('uniprot files @ $HHLIB\database')
@@ -74,7 +74,7 @@ def check_folder(fol_name):
         logger.info("%-25s : %s"%("FOLDER_FOUND",fol_name))
 
 def check_hhdb(hhlib,dbname):
-    global logger
+    global logger,dict_hhv
     '''
         add a more thorough check of the database folder
     '''
