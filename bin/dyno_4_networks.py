@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 '''
     @release_date  : $release_date
     @version       : $release_version
@@ -41,10 +42,12 @@ def initiate_logging():
 def main():
     global dict_params,logger
     initiate_logging();
-    args    =   argParser.jmatrix();
-    dict_params['file_coe']     =   args.coe;
-    dict_params['file_rho']     =   args.rho;
-    dict_params['file_lab']     =   args.label
+    args    =   argParser.networks();
+    dict_params['file_jmat']    =   args.fjmat;
+    dict_params['cut_mod']      =   float(args.mod);
+    dict_params['file_out']     =   args.fout;
+    dict_params['nsteps']      =   int(args.nsteps);
+    dict_params['vec_num']      =   int(args.nvec);
     object_netw                 =   Networks();
     object_netw.manager(dict_params);
 main()

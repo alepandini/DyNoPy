@@ -3,6 +3,7 @@ import logging,collections
 import dynoio.fileio as fileio
 import dynoio.fileutils as futils
 import dynoutil.rlib   as rlib
+import pandas as pd
 logger=logging.getLogger('DyNo ReMa')
 def calculate_jmatrix(m_rho,m_coe,rcutoff=0.5,coecutoff=1.0,jcutoff=0.0,vector_num=1,jlambda=0.5):
     nrows=m_rho.shape[0];  ncols=m_rho.shape[1]
@@ -60,3 +61,12 @@ def calculate_network_properties(_matrix,_label):
     matrix_for_R(_matrix,_f_edges,_f_nodes)
     rlib.save_communities_rscript(_label,_f_r)
     rlib.run_rscript(_f_r)
+def read_jmatrix_to_dataframe(file_jmatrix):
+    futils.check_file(file_jmatrix,cue_message="")
+    data_frame=pd.read_fwf(file_jmatrix)
+    return data_frame
+def slice_dataframe(df):
+
+    df.loc[:,["Res_a","Res_b","Cab"]]
+    df.iloc[:,[0,1,2,3]]
+
