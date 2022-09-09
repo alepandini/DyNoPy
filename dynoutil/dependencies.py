@@ -88,11 +88,18 @@ def check_hhdb(hhlib,dbname):
     check_folder(fol_hhdb)
     
     list_of_database=glob.glob(fol_hhdb+"/")
-    print(list_of_database)
-    #if(os.path.isdir(fol_hhdb)==False):
-    #    logger.error("%s does not contain the %s database in %s."%(hhlib,dbname,fol_hhdb))
-    #    logger.error("Please check if the database has been downloaded/named properly. Exiting")
-    #    exit()
+    
+    if(os.path.isdir(fol_hhdb)==False):
+        if(len(list_of_database)==0):
+            logger.error("%s does not contain any databases. Download the desired database. EXITING"%(fol_hhdb))
+            exit()
+        if(len(list_of_database)>0):
+            logger.error("Found following databases in %s"%(fol_hhdb))
+            logger.error("Choose one from the list below or download your choice...")
+            for i in len(list_of_database):
+                logger.error("%s"%(i))
+        #logger.error("Please check if the database has been downloaded/named properly. Exiting")
+            exit()
 
     fUtils.check_file(file_hhdb,cue_message=dbname+" files not found. Download the files again.")
     dict_hhv['hhdb']="%s/database/%s/%s"%(hhlib,dbname,dbname)
