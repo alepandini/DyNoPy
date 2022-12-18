@@ -178,3 +178,9 @@ def read_jmatrix(fName):
     fUtils.check_file(fName)
     jdata=pd.read_fwf(fName)
     return jdata
+def convert_df_col_to_str(dataframe,column_name="A"):
+    return_list=[]
+    for value in list(dataframe.loc[:,column_name].values):
+        return_list.append(str(value))
+    return return_list
+

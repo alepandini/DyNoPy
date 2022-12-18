@@ -65,20 +65,6 @@ class Networks(object):
         self._list_dist_data      =   []; 
         self._list_ie_data        =   [];
         
-    def _get_coev_matrix(self):
-        self._logger.info('%-20s : %s'%('STORING','coevolution matrix...'))
-        if(self._dict_params['file_coe']!=None):
-            self._matrix_coevolution  =   fileio.read_matrix(self._dict_params['file_coe'])
-            if(self._matrix_coevolution.shape[0]>0):
-                self._matrix_stats(self._matrix_coevolution);
-
-    def _get_rho_matrix(self):
-        self._logger.info('%-20s : %s'%('STORING','RHO matrix...'))
-        if(self._dict_params['file_rho']!=None):
-            self._matrix_rho  =   fileio.read_matrix(self._dict_params['file_rho'])
-            if(self._matrix_rho.shape[0]>0):
-                self._matrix_stats(self._matrix_rho);
-
     def _matrix_stats(self,_matrix):    
         self._logger.info('%-20s'%('MATRIX PROPERTIES'))
         self._logger.info('%-20s : %d x %d'%('No. of residues',_matrix.shape[0],_matrix.shape[1]))
@@ -86,12 +72,7 @@ class Networks(object):
         _max    =   np.max(_matrix);
         self._logger.info('%-20s : %.2f'%('Average',_avg));
         self._logger.info('%-20s : %.2f'%('Maximum',_max));
-    def _check_matrix_size(self):
-        N_coe   =   self._matrix_coevolution.shape[0];
-        N_rho   =   self._matrix_rho[-1][1];
-        if(N_rho != N_coe):
-            self._logger.error('%-20s : N (COE): %5d , N (RHO): %5d'%("RESIDUE_NUM_MISMATCH_ERROR",N_coe,N_rho))
-            exit()
+
     def _network_manager(self):
         self._matrix_j  =   [];
         if(self._dict_params['file_coe']!=None)and(self._dict_params['file_rho']!=None):
@@ -111,13 +92,26 @@ class Networks(object):
 
     def _get_jmatrix_data(self):
         self._jmatrix_df    =   fileio.read_jmatrix(self._dict_params["file_jmat"])
+        self._jmatrix_df.loc[:,"Res_a"]    =   fileio.convert_df_col_to_str(self._jmatrix_df,"Res_a")
+        self._jmatrix_df.loc[:,"Res_b"]    =   fileio.convert_df_col_to_str(self._jmatrix_df,"Res_b")
+
+    def _process_to_graph(self):
+        self.full_graph    =   igh.Graph.DataFrame(self._jmatrix_df,directed=False,use_vids=False)
+        self._num_nodes = len(self.full_graph.vs["name"])
+        #assign default community id to 0
+        self.full_graph.vs["community_id"]=self._num_nodes*[0]
+
+        #extract indices for each node
+        self._dict_node_index={}
+        for index in self.full_graph.vs.indices:
+            self._dict_node_index[self.full_graph.vs[index]["name"]]=index
 
     def _process_jmatrix(self):
-        #x[x.iloc[:,3]>2]
         '''
             https://www.opentechguides.com/how-to/article/pandas/193/index-slice-subset.html
             https://igraph.org/python/tutorial/develop/tutorials/visualize_communities/visualize_communities.html
         '''
+       
         self._vec_Q =   []
 
         _vec_i      =   self._dict_params['vec_num']
@@ -141,16 +135,29 @@ class Networks(object):
         for i in _list_of_steps:
             _filtered_df    =   self._jmatrix_df[_choosen_vector>i]
             _sliced_df  =   _filtered_df.iloc[:,[0,1,_vec_i]] 
-            _mygraph    =   igh.Graph.DataFrame(_sliced_df,directed=False)
+            _mygraph    =   igh.Graph.DataFrame(_sliced_df,directed=False,vertices=None,use_vids=False)
             _cle        =   _mygraph.community_leading_eigenvector()#igh.Graph.community_leading_eigenvector(_mygraph)
             Q           =   _cle.modularity
             self._logger.info("%-20s (Q) : %4.2f (%4.2f)"%("Vector cut-off..",i,Q))
 
             if(_cle.modularity>self._dict_params['cut_mod']):
                 self._logger.info("Desired Q, reached. Saving community graph")
-                self._save_community_graph(_cle,_mygraph);
+                #self._save_community_graph(_cle,_mygraph);
+                self._save_gml(_cle,_mygraph)
+                break
         self._logger.info("Desired Q could not be reached. Either lower your Q cut-off or change your vector.")
-       
+    def _save_gml(self,community_graph,_sub_graph):
+
+        num_communities=np.max(community_graph.membership)
+        _community_id=1
+        for _subgraph in community_graph.subgraphs():
+            list_of_nodes = _subgraph.vs["name"];
+            for _node in list_of_nodes:
+                _node_index=self._dict_node_index[_node]
+                self.full_graph.vs[_node_index]["community_id"]=_community_id
+            _community_id+=1
+        igh.write(self.full_graph,self._dict_params['file_out'])
+        
     def _save_community_graph(self,community_graph,main_graph):
         visual_style = {}
         visual_style["vertex_size"] = 25
@@ -171,15 +178,11 @@ class Networks(object):
 
         igh.plot(main_graph,self._dict_params['file_out'],palette=palette,**visual_style,)
         self._logger.info("Community saved in %s"%(self._dict_params['file_out']))
-        exit()
     def manager(self,dict_params):
         _start   =   timeit.default_timer();
         self._dict_params   =   dict_params;
         self._get_jmatrix_data()
+        self._process_to_graph()
         self._process_jmatrix()
-        #self._get_coev_matrix();
-        #self._get_rho_matrix();
-        #self._network_manager();
-
         _stop    =   timeit.default_timer();
         self._logger.info('%-20s : %.2f (s)'%('FINISHED_IN',_stop-_start));
