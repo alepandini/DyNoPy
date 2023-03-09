@@ -35,9 +35,9 @@ import dynoIO.fileIO as fileIO
 '''
     class specific tools
 '''
-from dynolib.classlib import classlib
+#from dynolib.classlib import classlib
 
-class MyClass(object):
+class PML(object):
     '''
         classdocs
     '''
@@ -45,9 +45,12 @@ class MyClass(object):
         '''
             Constructor
         '''
-        self._logger        =   logging.getLogger('Dyno UP')
+        self._logger        =   logging.getLogger('Dyno PML')
         self._initialize();
         
     def _initialize(self):
         pass
+    def manager(self,dict_params):
+        self._dict_params=dict_params
+
 

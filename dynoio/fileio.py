@@ -25,6 +25,7 @@
 '''
 import numpy as np
 import os,logging,h5py
+import pandas as pd
 import dynoio.fileutils as fUtils
 import dynolib.pwielib as pwielib
 logger=logging.getLogger('DyNo IO ')
@@ -173,4 +174,13 @@ def read_data_to_matrix(fName,limit=999999999):
                 Array_Data[i][j]=float(line[j]);
             count+=1;
     return Array_Data
+def read_jmatrix(fName):
+    fUtils.check_file(fName)
+    jdata=pd.read_fwf(fName)
+    return jdata
+def convert_df_col_to_str(dataframe,column_name="A"):
+    return_list=[]
+    for value in list(dataframe.loc[:,column_name].values):
+        return_list.append(str(value))
+    return return_list
 

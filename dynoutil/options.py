@@ -244,4 +244,43 @@ def jmatrix():
 
     args = parser.parse_args()
     return args
+def networks():
+    _usage_info="Extract networks from J-matrix:\n"
+    _usage_info+="dyno_4_networks.py -h\n"
+    _usage_info+="e.g.: dyno_4_networks.py -j jmatrix.txt -m 0.8 -o label \n";
+
+    parser = argp.ArgumentParser(prog                   =   "dyno_4_networks.py",
+                                 usage="",description   =   _usage_info,
+                                 formatter_class        =   argp.RawTextHelpFormatter
+                                 );
+    parser.add_argument("-j","--fjmat",
+                        default=None,
+                        help="J-matrix file"
+                        );
+
+    parser.add_argument("-q","--mod",
+                        default=0.8,
+                        help="Modularity Cut-off to search for communities"
+                        );
+    parser.add_argument("-o","--fout",
+                        default="Community.pdf",
+                        help="Output file with network data"
+                        );
+    parser.add_argument("-v","--nvec",
+                        default=3,
+                        help="default column for network analysis 3. [FULL SCAN NOT IMPLEMENTED]"
+                        );
+    parser.add_argument("-s",
+                        "--nsteps",
+                        default=10,
+                        help="No. of steps for scanning... to achieve the set Q, default is 10"
+                        );
+    '''
+    parser.add_argument("--rhocutoff",
+                        default=0.5,
+                        help="Cut-off for absolute rho values "
+                        );
+    '''
+    args = parser.parse_args()
+    return args
 
