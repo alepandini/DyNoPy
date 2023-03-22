@@ -99,7 +99,7 @@ class Networks(object):
         self.full_graph    =   igh.Graph.DataFrame(self._jmatrix_df,directed=False,use_vids=False)
         self._num_nodes = len(self.full_graph.vs["name"])
         #assign default community id to 0
-        self.full_graph.vs["community_id"]=self._num_nodes*[0]
+        self.full_graph.vs["community_id"]=self._num_nodes*[-1]
 
         #extract indices for each node
         self._dict_node_index={}
@@ -151,13 +151,23 @@ class Networks(object):
         num_communities=np.max(community_graph.membership)
         _community_id=1
         for _subgraph in community_graph.subgraphs():
-            list_of_nodes = _subgraph.vs["name"];
-            for _node in list_of_nodes:
-                _node_index=self._dict_node_index[_node]
+            list_of_node_names = _subgraph.vs["name"];
+            for _node_name in list_of_node_names:
+                _node_index=self._dict_node_index[_node_name]
                 self.full_graph.vs[_node_index]["community_id"]=_community_id
+
             _community_id+=1
         igh.write(self.full_graph,self._dict_params['file_out'])
-        
+    def _change_node_name(self,node_name="NaN"):
+        new_node_name=""
+        _node_name_int=int(node_name)
+        if(_node_name_int<10):
+            return _node_name="R_000"+node_name
+        if(_node_name_int>=10 and _node_name_int<=99):
+            return _node_name="R_00"+node_name
+        if(_node_name_int>=100 and _node_name_int<=999):
+            return _node_name="R_"+node_name
+
     def _save_community_graph(self,community_graph,main_graph):
         visual_style = {}
         visual_style["vertex_size"] = 25
