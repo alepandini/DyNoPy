@@ -1,0 +1,24 @@
+#!/usr/bin/python3
+
+import dynoio.fileio as fileio
+import dynoio.fileutils as futils
+import logging
+
+class Sequence(object):
+    '''
+        class docs
+    '''
+    def __init__(self):
+        self.dict_fasta_sequence={}
+        self._initiate_logging()
+
+    def _initiate_logging(self):
+        self._logger = logging.getLogger('PDB:')
+
+    def get_fasta_sequence(self,file_fasta=""):
+        futils.check_file(file_fasta)
+        self.dict_fasta_sequence = fileio.read_fasta(file_fasta)
+
+
+
+

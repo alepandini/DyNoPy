@@ -3,7 +3,7 @@
     @release_date  : $release_date
     @version       : $release_version
     @author        : Sarath Chandra Dantu
-    
+
 
      Copyright (C) 2020 Sarath Chandra Dantu & Alessandro Pandini
 
@@ -27,23 +27,32 @@ import logging
 import dynoutil.options as argParser
 from dynotools.uniprot import Uniprot
 
-logger="";
-dict_params={};
+logger = ""
+dict_params = {}
+
+
 def initiate_logging():
     global logger
     '''
         input: trj,top,
-            -- calculate PairWise Interaction Energies 
+            -- calculate PairWise Interaction Energies
             -- generates pairs
-            -- assign weights to each pair 
+            -- assign weights to each pair
     '''
-    logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.INFO);
-    logger=logging.getLogger('ResRank')
+    logging.basicConfig(
+        format='%(name)s - %(levelname)s - %(message)s',
+        datefmt='%m/%d/%Y %I:%M:%S %p',
+        level=logging.INFO)
+    logger = logging.getLogger('ResRank')
+
+
 def main():
-    global dict_params,logger
-    initiate_logging();
-    args    =   argParser.resrank();
-    dict_params['uniprotid']    =   args.uniprot
-    object_uniprot              =   Uniprot();
-    object_uniprot.manager(dict_params);
+    global dict_params, logger
+    initiate_logging()
+    args = argParser.resrank()
+    dict_params['uniprotid'] = args.uniprot
+    object_uniprot = Uniprot()
+    object_uniprot.manager(dict_params)
+
+
 main()

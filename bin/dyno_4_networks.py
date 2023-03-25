@@ -28,7 +28,10 @@ import logging
 import dynoutil.options as argParser
 from dynotools.networks import Networks
 
-logger="";  dict_params={};
+logger = ""
+dict_params = {}
+
+
 def initiate_logging():
     global logger
     '''
@@ -36,18 +39,26 @@ def initiate_logging():
             -- calculate Rho matrix
             -- calculate J-Matrix if Coevolution matrix is provided
     '''
-    logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.INFO);
-    logger=logging.getLogger('Dyno Netw')
+    logging.basicConfig(
+        format='%(name)s - %(levelname)s - %(message)s',
+        datefmt='%m/%d/%Y %I:%M:%S %p',
+        level=logging.INFO)
+    logger = logging.getLogger('Dyno Netw')
+
 
 def main():
-    global dict_params,logger
-    initiate_logging();
-    args    =   argParser.networks();
-    dict_params['file_jmat']    =   args.fjmat;
-    dict_params['cut_mod']      =   float(args.mod);
-    dict_params['file_out']     =   args.fout;
-    dict_params['nsteps']      =   int(args.nsteps);
-    dict_params['vec_num']      =   int(args.nvec);
-    object_netw                 =   Networks();
-    object_netw.manager(dict_params);
+    global dict_params, logger
+    initiate_logging()
+    args = argParser.networks()
+    dict_params['file_jmat'] = args.fjmat
+    dict_params['cut_mod'] = float(args.mod)
+    dict_params['file_gml'] = args.fgml
+    dict_params['nsteps'] = int(args.nsteps)
+    dict_params['vec_num'] = int(args.nvec)
+    dict_params['file_evc'] = args.fevc
+
+    object_netw = Networks()
+    object_netw.manager(dict_params)
+
+
 main()

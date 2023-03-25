@@ -3,7 +3,7 @@
     @release_date  : $release_date
     @version       : $release_version
     @author        : Sarath Chandra Dantu
-    
+
 
      Copyright (C) 2020 Sarath Chandra Dantu & Alessandro Pandini
 
@@ -23,16 +23,21 @@
      along with DyNoPy.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-import timeit,os,sys
+import timeit
+import os
+import sys
 import multiprocessing as mp
 import dynoutil.dependencies as dependency
 import dynoio.fileio as fileIO
 import dynoutil.options as argParser
 
+
 def main():
-    global file_aln,file_ccm,pdbID,nthreads,dict_hhv
-    args    =   argParser.opts_coevolution();
-    pdbID   =   args.pdbid
-    hhdb    =   args.database
-    nthreads=   args.numthreads
+    global file_aln, file_ccm, pdbID, nthreads, dict_hhv
+    args = argParser.opts_coevolution()
+    pdbID = args.pdbid
+    hhdb = args.database
+    nthreads = args.numthreads
+
+
 main()

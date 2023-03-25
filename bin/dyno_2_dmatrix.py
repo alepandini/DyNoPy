@@ -27,7 +27,10 @@ import logging
 import dynoutil.options as argParser
 from dynotools.resmatrix import ResMatrix
 
-logger="";  dict_params={};
+logger = ""
+dict_params = {}
+
+
 def initiate_logging():
     global logger
     '''
@@ -35,24 +38,30 @@ def initiate_logging():
             -- calculate Rho matrix
             -- calculate J-Matrix if Coevolution matrix is provided
     '''
-    logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.INFO);
-    logger=logging.getLogger('Dyno ReMa')
+    logging.basicConfig(
+        format='%(name)s - %(levelname)s - %(message)s',
+        datefmt='%m/%d/%Y %I:%M:%S %p',
+        level=logging.INFO)
+    logger = logging.getLogger('Dyno ReMa')
+
 
 def main():
-    global dict_params,logger
-    initiate_logging();
-    args    =   argParser.resma();
+    global dict_params, logger
+    initiate_logging()
+    args = argParser.resma()
     #dict_params['file_coe']     =   args.coe;
-    dict_params['file_gem']     =   args.gem;
-    dict_params['fold_iex']     =   args.fiex;
-    dict_params['resi_fst']     =   int(args.fst)
-    dict_params['resi_lst']     =   int(args.lst)
-    dict_params['num_rep']      =   int(args.nrep)
-    dict_params['file_lab']     =   args.fene
-    dict_params['file_out']     =   args.label
-    dict_params['num_thr']      =   int(args.tmax)
-    dict_params['corr_met']     =   int(args.corr)
-    dict_params['corr_vec']     =   int(args.nvec);
-    object_rema                 =   ResMatrix();
-    object_rema.manager(dict_params);
+    dict_params['file_gem'] = args.gem
+    dict_params['fold_iex'] = args.fiex
+    dict_params['resi_fst'] = int(args.fst)
+    dict_params['resi_lst'] = int(args.lst)
+    dict_params['num_rep'] = int(args.nrep)
+    dict_params['file_lab'] = args.fene
+    dict_params['file_out'] = args.label
+    dict_params['num_thr'] = int(args.tmax)
+    dict_params['corr_met'] = int(args.corr)
+    dict_params['corr_vec'] = int(args.nvec)
+    object_rema = ResMatrix()
+    object_rema.manager(dict_params)
+
+
 main()

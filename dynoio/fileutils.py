@@ -32,6 +32,7 @@ def check_file(fName,cue_message=''):
         exit()
     else:
         logger.debug('%-20s : %s','FILE_FOUND',fName)
+
 #def check_exe(eName):
 #    global logger
 #    if(os.path.isfile(eName)==False):
@@ -50,3 +51,27 @@ def checkfile_with_message(fileName,message):
     if(os.path.isfile(fileName))==False:
         logger.info('%s does not exist. %s',fileName,message)
         exit();
+def get_file_type(file_name):
+    extension=os.path.splitext(file_name)
+    return extension
+
+def read_fasta(file_fasta):
+    '''
+        reads a fasta file
+        returns a fasta_sequence dictionary 
+        assumption the sequence numbering starts with 1
+    '''
+    global logger
+    dict_fasta_sequence={}
+    logger.debug("%-15s : %s"%("FASTA file",file_fasta))
+
+    fileObject=open(file_fasta,'r')
+
+    count=1
+    for line in fileObject:
+        if(line[0]!=">"):
+            line=line.strip()
+            for i in line:
+                dict_fasta_sequence[count]=i;
+                count+=1;
+    return dict_fasta_sequence

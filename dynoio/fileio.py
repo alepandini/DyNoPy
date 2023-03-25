@@ -128,17 +128,6 @@ def saveh5(outh5,npdata):
     hf.create_dataset('d1',data=npdata,compression="gzip");
     hf.close()
 
-def read_fasta(seq_file):
-    global logger
-    fUtils.check_file(seq_file)
-    FASTA_SEQUENCE="";
-    fileObject=open(seq_file,'r');
-    for line in fileObject:
-        if(line[0]!=">"):
-            line=line.strip()
-            for i in line:
-                FASTA_SEQUENCE+="%s"%(i);
-    return FASTA_SEQUENCE
 
 def remove_grammar(word):
     if(word.find(",")>-1):

@@ -27,7 +27,10 @@ import logging
 import dynoutil.options as argParser
 from dynotools.jmatrix import JMatrix
 
-logger="";  dict_params={};
+logger = ""
+dict_params = {}
+
+
 def initiate_logging():
     global logger
     '''
@@ -35,20 +38,25 @@ def initiate_logging():
             -- calculate Rho matrix
             -- calculate J-Matrix if Coevolution matrix is provided
     '''
-    logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.INFO);
-    logger=logging.getLogger('Dyno ReMa')
+    logging.basicConfig(
+        format='%(name)s - %(levelname)s - %(message)s',
+        datefmt='%m/%d/%Y %I:%M:%S %p',
+        level=logging.INFO)
+    logger = logging.getLogger('Dyno ReMa')
+
 
 def main():
-    global dict_params,logger
-    initiate_logging();
-    args    =   argParser.jmatrix();
-    dict_params['file_coe']     =   args.coe;
-    dict_params['file_rho']     =   args.rho;
-    dict_params['file_jmat']    =   args.out;
-    dict_params['lambda']       =   float(args.dlambda)
-    dict_params['scoe']         =   args.scalescore
-    dict_params['rhocutoff']    =   float(args.rhocutoff)
-    object_jma                 =   JMatrix();
-    object_jma.manager(dict_params);
+    global dict_params, logger
+    initiate_logging()
+    args = argParser.jmatrix()
+    dict_params['file_coe'] = args.coe
+    dict_params['file_rho'] = args.rho
+    dict_params['file_jmat'] = args.out
+    dict_params['lambda'] = float(args.dlambda)
+    dict_params['scoe'] = args.scalescore
+    dict_params['rhocutoff'] = float(args.rhocutoff)
+    object_jma = JMatrix()
+    object_jma.manager(dict_params)
+
 
 main()

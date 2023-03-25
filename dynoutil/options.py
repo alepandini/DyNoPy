@@ -32,13 +32,15 @@ def opts_coevolution():
                                  formatter_class        =   argp.RawTextHelpFormatter
                                  );
     parser = argp.ArgumentParser()
-    parser.add_argument("-i", "--pdbid",help="pdbID; NOTE: expects pdbID.fasta file in the directory")
+    parser.add_argument("-p", "--pdb",help="pdb file")
+    parser.add_argument("-f", "--fasta",help="fasta file")
+    parser.add_argument("-l", "--label",help="Label for output files")
     parser.add_argument("-d", "--database",default="UniRef30_2020_02",help="uniprot database ; Supports only UniRef30_2020_02")
     parser.add_argument("-n", "--numthreads",default=1,help="number of threads to use")
     args = parser.parse_args()
-    if(args.pdbid==None):
-        print('Provide pdbid. Exiting')
-        exit()
+    #if(args.pdbid==None):
+    #    print('Provide pdbid. Exiting')
+    #    exit()
         
     return args
 def opts_test():
@@ -262,10 +264,15 @@ def networks():
                         default=0.8,
                         help="Modularity Cut-off to search for communities"
                         );
-    parser.add_argument("-o","--fout",
-                        default="Community.pdf",
-                        help="Output file with network data"
+    parser.add_argument("-g","--fgml",
+                        default="Community.gml",
+                        help="GML file with network data"
                         );
+    parser.add_argument("-e","--fevc",
+                        default="Community_EVC.txt",
+                        help="Output file with eigenvector centrality scores of the community graphs"
+                        );
+
     parser.add_argument("-v","--nvec",
                         default=3,
                         help="default column for network analysis 3. [FULL SCAN NOT IMPLEMENTED]"

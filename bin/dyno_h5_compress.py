@@ -3,7 +3,7 @@
     @release_date  : $release_date
     @version       : $release_version
     @author        : Sarath Chandra Dantu
-    
+
 
      Copyright (C) 2020 Sarath Chandra Dantu & Alessandro Pandini
 
@@ -23,28 +23,38 @@
      along with DyNoPy.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-import timeit,os,logging
+import timeit
+import os
+import logging
 import dynoio.fileio as fileIO
 import dynoutil.options as argParser
 
-logger="";
-dict_params={};
+logger = ""
+dict_params = {}
+
+
 def initiate_logging():
     global logger
     '''
         input: coevolution matrix, sequence alignment, fasta sequence
             -- calculate frequencies of A and B
             -- generates pairs
-            -- assign weights to each pair 
+            -- assign weights to each pair
                 @log frequencies
                 @
     '''
-    logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.INFO);
-    logger=logging.getLogger('Dyno H5  ')
+    logging.basicConfig(
+        format='%(name)s - %(levelname)s - %(message)s',
+        datefmt='%m/%d/%Y %I:%M:%S %p',
+        level=logging.INFO)
+    logger = logging.getLogger('Dyno H5  ')
+
 
 def main():
     global logger
-    initiate_logging();
-    args    =   argParser.conv_h5_to_ascii();
-    fileIO.compress_h5(args.h5,args.pair,args.out,int(args.dt))
+    initiate_logging()
+    args = argParser.conv_h5_to_ascii()
+    fileIO.compress_h5(args.h5, args.pair, args.out, int(args.dt))
+
+
 main()

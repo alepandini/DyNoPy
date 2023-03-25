@@ -29,6 +29,8 @@ import logging,collections,h5py,tqdm
 import numpy as np
 from itertools import combinations
 from _operator import itemgetter
+from Bio import pairwise2
+from Bio import SeqUtils
 
 class SeqTools(object):
     '''

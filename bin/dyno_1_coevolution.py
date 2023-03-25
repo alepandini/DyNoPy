@@ -3,7 +3,7 @@
     @release_date  : $release_date
     @version       : $release_version
     @author        : Sarath Chandra Dantu
-    
+
 
      Copyright (C) 2020 Sarath Chandra Dantu & Alessandro Pandini
 
@@ -25,20 +25,25 @@
 '''
 
 import dynoutil.options as argParser
-import dynotools.coevolution as Coevolution
+from dynotools.coevolution import Coevolution
 import logging
-logger=""
+logger = ""
+
 
 def initiate_logging():
     # initiate logger
     global logger
-    logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.INFO)
-    logger=logging.getLogger('Dyno CoEv')
+    logging.basicConfig(
+        format='%(name)s - %(levelname)s - %(message)s',
+        datefmt='%m/%d/%Y %I:%M:%S %p',
+        level=logging.INFO)
+    logger = logging.getLogger('Dyno CoEv')
 
 def main():
     initiate_logging()
-    args    =   argParser.opts_coevolution()
+    args = argParser.opts_coevolution()
     object_coevolution = Coevolution()
+    object_coevolution.generate_residue_dictionary(args)
     object_coevolution.run_coevolution(args)
 
 main()

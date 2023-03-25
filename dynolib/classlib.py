@@ -20,34 +20,35 @@
      GNU General Public License for more details.
 
      You should have received a copy of the GNU General Public License
-     along with ResPy.  If not, see <http://www.gnu.org/licenses/>.
+     along with DyNoPy.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
 '''
     python imports
 '''
-import os,logging,collections
 '''
     generic tools
 '''
-import dynoutil.hash_maps as hmaps
-import dynoio.fileio as fileIO
 '''
     class specific tools
 '''
-from dynoTools.classLIB import classLib
 
+from dynoTools.classLIB import classLib
+import dynoio.fileio as fileIO
+import dynoutil.hash_maps as hmaps
+import os
+import logging, collections
 class MyClass(object):
     '''
         classdocs
     '''
+
     def __init__(self):
         '''
             Constructor
         '''
-        self._logger        =   logging.getLogger('Dyno UP')
-        self._initialize();
-        
+        self._logger = logging.getLogger('Dyno UP')
+        self._initialize()
+
     def _initialize(self):
         pass
-
