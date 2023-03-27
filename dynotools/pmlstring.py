@@ -1,4 +1,4 @@
-from GMLParser import *
+from dynotools.gmlparser import *
 import igraph as ig
 import matplotlib as mpl
 import numpy as np

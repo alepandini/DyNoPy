@@ -21,7 +21,12 @@ class GMLParser:
             return None
 
     def create_nodes_dict(self, property_name, integer_cast = False):
+        if property_name not in self.graph.vertex.attributes():
+            print("%s requested is not a property of the node in the graph!!!"%(property_name))
+            return None
+
         nodes_dict = dict()
+        
         for vertex in self.graph.vs:
             id_key = self.__get_res_number(vertex.attributes()['name'])
             if integer_cast:
@@ -31,6 +36,10 @@ class GMLParser:
         return nodes_dict
 
     def create_edges_dict(self, property_name, integer_cast = False):
+        if property_name not in self.graph.edge.attributes():
+            print("%s requested is not a property of the edge in the graph!!!"%(property_name))
+            return None
+
         edges_dict = dict()
         for edge in self.graph.es:
             s_id = edge.source
