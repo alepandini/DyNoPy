@@ -272,6 +272,10 @@ def networks():
                         default="Community_EVC.txt",
                         help="Output file with eigenvector centrality scores of the community graphs"
                         );
+    parser.add_argument("-o","--fstats",
+                        default="Residue_Stats.txt",
+                        help="Output file with data by residue"
+                        );
 
     parser.add_argument("-v","--nvec",
                         default=3,

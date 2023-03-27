@@ -108,6 +108,10 @@ class Networks(object):
 
     def _get_jmatrix_data(self):
         self._jmatrix_df = fileio.read_jmatrix(self._dict_params["file_jmat"])
+        self._rename_residues()
+
+    def _rename_residues(self):
+
         '''
             clean this in future
             is a quick fix to changing residue int to string
@@ -117,20 +121,11 @@ class Networks(object):
         for x in self._jmatrix_df['Res_a']:
             temp.append(self._change_node_name(x))
         self._jmatrix_df['Res_a'] = temp
+
         temp = []
         for x in self._jmatrix_df['Res_b']:
             temp.append(self._change_node_name(x))
         self._jmatrix_df['Res_b'] = temp
-
-        '''
-            very slow and inefficient
-        for index,row in self._jmatrix_df.iterrows():
-            self._jmatrix_df[index,"Res_a"]=self._change_node_name(row["Res_a"])
-            self._jmatrix_df[index,"Res_b"]=self._change_node_name(row["Res_b"])
-        exit()
-        #self._jmatrix_df.loc[:,"Res_a"]    =   fileio.convert_df_col_to_str(self._jmatrix_df,"Res_a")
-        #self._jmatrix_df.loc[:,"Res_b"]    =   fileio.convert_df_col_to_str(self._jmatrix_df,"Res_b")
-        '''
 
     def _process_to_graph(self):
         self.full_graph = igh.Graph.DataFrame(
@@ -177,7 +172,8 @@ class Networks(object):
             ("No. of Steps for Search",
              self._dict_params['nsteps']))
 
-        Q = 0 _list_Q = []
+        Q = 0 
+        _list_Q = []
         for i in _list_of_steps:
             _filtered_df = self._jmatrix_df[_choosen_vector > i]
             _sliced_df = _filtered_df.iloc[:, [0, 1, _vec_i]]
@@ -211,14 +207,52 @@ class Networks(object):
             for _node_name in list_of_node_names:
                 _node_index = self._dict_node_index[_node_name]
                 self.full_graph.vs[_node_index]["community_id"] = _community_id
-                _evc_out += "%15d%15d%15.5f\n" % (self._get_residue_id(
+                _evc_out += "%15d%15d%15.5f\n" % (self._get_int_residue_id(
                     _node_name), _community_id, self._evc_dictionary[_node_name])
                 self._dict_resid_evc[_node_name] = _community_id
 
             _community_id += 1
         fileio.save_file(self._dict_params['file_evc'], _evc_out)
         igh.write(self.full_graph, self._dict_params['file_gml'])
+    def save_residue_stats(self):
+        list_of_residue_ids=list(np.unique(self._jmatrix_df["Res_a"]))
 
+        list_of_residue_ids.append(list(self._jmatrix_df["Res_b"])[-1])
+        _j_col=list(self._jmatrix_df.columns)[4:]
+        #_new_j_col=[]
+        _out=""
+        _out="Resid"+",EVC"+",CommunityID"+",C_CS,"+",C_SCS"
+
+        for i in _j_col:
+            #_col_names.append("C_"+i)
+            _out+=",%s"%(i)
+        _out+="\n"
+        for resid in list_of_residue_ids:
+            int_resid=self._get_int_residue_id(resid)
+
+            _df_a=self._jmatrix_df[self._jmatrix_df["Res_a"]==resid]
+            _df_b=self._jmatrix_df[self._jmatrix_df["Res_b"]==resid]
+            _community_id=-1
+            _evc=-1.00
+            if(resid in self._dict_resid_evc.keys()):
+                _community_id=self._dict_resid_evc[resid]
+                _evc=self._evc_dictionary[resid]
+            _out+="%d,%d,%.5f"%(int_resid,_community_id,_evc)
+
+            _res_stats=[]
+            #print(int_resid,len(_df_a),len(_df_b),_df_a.empty,_df_b.empty)
+            if(_df_a.empty):
+                _res_stats=_df_b.sum(numeric_only=True)
+            if(_df_b.empty):
+                _res_stats=_df_a.sum(numeric_only=True)
+            if(_df_a.empty==False and _df_b.empty==False):
+                _df_a.add(_df_b)
+                _res_stats=_df_a.sum(numeric_only=True)
+            for _stat in _res_stats:
+                _out+=",%.5f"%(_stat)
+
+            _out+="\n"
+        fileio.save_file(self._dict_params['file_stats'],_out)    
     def _change_node_name(self, node_name="NaN"):
         new_node_name = ""
         _node_name_int = np.rint(node_name).astype(int)
@@ -233,7 +267,7 @@ class Networks(object):
             new_node_name = "R_" + node_name
         return new_node_name
 
-    def _get_residue_id(self, node_name):
+    def _get_int_residue_id(self, node_name):
         return int(re.findall(r'\d+', node_name)[0])
 
     def get_evc_scores(self, graph):
@@ -244,39 +278,12 @@ class Networks(object):
             self._evc_dictionary[node_name] = self._evc_list[count]
             count += 1
 
-    def _save_community_graph(self, community_graph, main_graph):
-        visual_style = {}
-        visual_style["vertex_size"] = 25
-        visual_style["vertex_label_size"] = 10
-        visual_style["edge_width"] = 1
-        visual_style["vertex_frame_width"] = 0
-        visual_style["vertex_label_color"] = "black"
-        num_communities = np.max(community_graph.membership)
-        palette = igh.RainbowPalette(n=num_communities + 1)
-        for i, community in enumerate(community_graph):
-            s1 = community_graph.subgraph(i)
-            vertex_labels = [int(x) for x in s1.vs["name"]]
-            main_graph.vs[community]["color"] = i
-        visual_style["vertex_label_size"] = 10
-        visual_style["edge_width"] = 1
-        visual_style["vertex_frame_width"] = 0
-        visual_style["vertex_label_color"] = "black"
-        num_communities = np.max(community_graph.membership)
-        palette = igh.RainbowPalette(n=num_communities + 1)
-        for i, community in enumerate(community_graph):
-            s1 = community_graph.subgraph(i)
-            vertex_labels = [int(x) for x in s1.vs["name"]]
-            main_graph.vs[community]["color"] = i
-            # mygraph.vs[community]["name"] = vertex_labels
-            main_graph.vs[community]["vertex_label"] = vertex_labels
-            main_graph.vs[community]["vertex_color"] = palette[i]
-        visual_style["vertex_label"] = main_graph.vs["vertex_label"]
-
     def manager(self, dict_params):
         _start = timeit.default_timer()
         self._dict_params = dict_params
         self._get_jmatrix_data()
         self._process_to_graph()
         self._process_jmatrix()
+        self.save_residue_stats()
         _stop = timeit.default_timer()
         self._logger.info('%-20s : %.2f (s)' % ('FINISHED_IN', _stop - _start))

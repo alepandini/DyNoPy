@@ -56,6 +56,7 @@ def main():
     dict_params['nsteps'] = int(args.nsteps)
     dict_params['vec_num'] = int(args.nvec)
     dict_params['file_evc'] = args.fevc
+    dict_params['file_stats'] = args.fstats
 
     object_netw = Networks()
     object_netw.manager(dict_params)
