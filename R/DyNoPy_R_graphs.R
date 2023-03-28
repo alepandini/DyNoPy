@@ -61,7 +61,7 @@ dynor_mat_impplot <- function(input_mat, main_title, rescale = T){
   par(opar)
 }
 
-dynor_mat_boxplot <- function(input_mat, main_title, rescale = T){
+dynor_mat_boxplot <- function(input_mat, main_title, rescale = T, outflag = TRUE){
   if (rescale){
     s_input_mat = input_mat / mean(input_mat)
     s_input_mat[s_input_mat < 1] = NA
@@ -70,7 +70,6 @@ dynor_mat_boxplot <- function(input_mat, main_title, rescale = T){
   }
   nres <- nrow(input_mat)
   xseq <- seq(5, nres, 5)
-  opar <- par(no.readonly = TRUE)
   par(pty = 'm')
   par(las = 2)
   bxp = boxplot(
@@ -79,8 +78,15 @@ dynor_mat_boxplot <- function(input_mat, main_title, rescale = T){
     xaxt = 'n',
     outcex=0.5,
     outpch=16,
+    outline = outflag,
     main = main_title
   )
   axis(1, xseq)
-  par(opar)
+}
+
+dynor_mat_panel_boxplot <- function(input_mat, main_title, rescale = T){
+    par(mfrow = c(2,1))
+    dynor_mat_boxplot(input_mat, main_title, rescale, outflag = FALSE)
+    dynor_mat_boxplot(input_mat, main_title, rescale, outflag = TRUE)
+    par(mfrow = c(1,1))
 }
