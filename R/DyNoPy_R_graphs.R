@@ -1,20 +1,20 @@
 ######################################################################
 # functions
-coev_heatmap <- function(coev_mat, main_title, rescale = T, col_scheme = "Viridis"){
+dynor_mat_heatmap <- function(input_mat, main_title, rescale = T, col_scheme = "Viridis"){
   if (rescale){
-    s_coev_mat <- coev_mat / mean(coev_mat)
-    s_coev_mat[s_coev_mat < 1] = NA
+    s_input_mat <- input_mat / mean(input_mat)
+    s_input_mat[s_input_mat < 1] = NA
   }else{
-    s_coev_mat <- coev_mat
+    s_input_mat <- input_mat
   }
-  nres <- nrow(coev_mat)
+  nres <- nrow(input_mat)
   xseq <- seq(5, nres, 5)
   tseq <- xseq / nres
   opar <- par(no.readonly = TRUE)
   par(pty = 's')
   par(las = 2)
   image(
-    s_coev_mat,
+    s_input_mat,
     xaxt = 'n',
     yaxt = 'n',
     col = hcl.colors(12, col_scheme, rev = T),
@@ -27,16 +27,16 @@ coev_heatmap <- function(coev_mat, main_title, rescale = T, col_scheme = "Viridi
   par(opar)
 }
 
-coev_barplot <- function(coev_mat, main_title, rescale = T){
+dynor_mat_impplot <- function(input_mat, main_title, rescale = T){
   if (rescale){
-    s_coev_mat = coev_mat / mean(coev_mat)
-    s_coev_mat[s_coev_mat < 1] = NA
+    s_input_mat = input_mat / mean(input_mat)
+    s_input_mat[s_input_mat < 1] = NA
   }else{
-    s_coev_mat = coev_mat
+    s_input_mat = input_mat
   }
-  nres <- nrow(coev_mat)
+  nres <- nrow(input_mat)
   xseq <- seq(5, nres, 5)
-  mean_coev_vec <- apply(s_coev_mat, 1, mean, na.rm = TRUE)
+  mean_coev_vec <- apply(s_input_mat, 1, mean, na.rm = TRUE)
   mean_of_mean <- mean(mean_coev_vec)
   opar <- par(no.readonly = TRUE)
   par(pty = 'm')
@@ -61,20 +61,20 @@ coev_barplot <- function(coev_mat, main_title, rescale = T){
   par(opar)
 }
 
-coev_boxplot <- function(coev_mat, main_title, rescale = T){
+dynor_mat_boxplot <- function(input_mat, main_title, rescale = T){
   if (rescale){
-    s_coev_mat = coev_mat / mean(coev_mat)
-    s_coev_mat[s_coev_mat < 1] = NA
+    s_input_mat = input_mat / mean(input_mat)
+    s_input_mat[s_input_mat < 1] = NA
   }else{
-    s_coev_mat = coev_mat
+    s_input_mat = input_mat
   }
-  nres <- nrow(coev_mat)
+  nres <- nrow(input_mat)
   xseq <- seq(5, nres, 5)
   opar <- par(no.readonly = TRUE)
   par(pty = 'm')
   par(las = 2)
   bxp = boxplot(
-    s_coev_mat,
+    s_input_mat,
     xlab = 'residue position',
     xaxt = 'n',
     outcex=0.5,
