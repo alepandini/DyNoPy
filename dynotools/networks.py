@@ -221,7 +221,7 @@ class Networks(object):
         _j_col=list(self._jmatrix_df.columns)[4:]
         #_new_j_col=[]
         _out=""
-        _out="Resid"+",EVC"+",CommunityID"+",C_CS,"+",C_SCS"
+        _out="Resid"+",CommunityID"+",EVC"+",C_CS,"+",C_SCS"
 
         for i in _j_col:
             #_col_names.append("C_"+i)

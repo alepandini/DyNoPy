@@ -36,7 +36,7 @@ coev_barplot <- function(coev_mat, main_title, rescale = T){
   }
   nres <- nrow(coev_mat)
   xseq <- seq(5, nres, 5)
-  cum_coev_vec <- apply(coev_mat, 1, sum)
+  cum_coev_vec <- apply(s_coev_mat, 1, median)
   opar <- par(no.readonly = TRUE)
   par(pty = 'm')
   par(las = 2)
@@ -45,7 +45,7 @@ coev_barplot <- function(coev_mat, main_title, rescale = T){
     border = 'grey',
     col = 'pink',
     xlab = 'residue position',
-    ylim = c(0, ceiling(max(cum_coev_vec)/10)*10),
+    #ylim = c(0, ceiling(max(cum_coev_vec)/10)*10),
     main = main_title
   )
   axis(1, xseq, at = xpos[xseq])
