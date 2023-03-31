@@ -1,0 +1,84 @@
+---
+title: "Coevolution data visualisation"
+author: "Dr. Sarath Dantu"
+date: "2023-03-27"
+output: html_document
+---
+
+#Load the source R script containing the functions for plotting
+
+```{r}
+#set path to DyNoPy folder
+path_to_dynopy="DyNoPy"
+#no need to edit this variable
+path_to_R_script=paste(path_to_dynopy,"/R/DyNoPy_R_graphs.R",sep="")
+#loading the script
+source(path_to_R_script)
+```
+
+#Load the coevolution matrix file
+Please note the functions below are also applicable to visualise J-matrix or Scaled Coevolution Score matrix or any data in matrix format.
+
+```{r}
+#this is the file generate from dyno_1_coevolution.py
+file_co_matrix<-"path/to/the/file/filename.mat"
+coevolution_matrix<-as.matrix(read.table(file_co_matrix,header=F))
+```
+
+This file "Residue_stats.txt" is generated from dyno_4_networks.py -o option. It contains the following data
+
+*Residue ID
+*Community ID: community number to which the residue belongs to based on cut-off score of modularity Q
+*EVC: Eigenvector centrality score, tells you how imporant a residue is, 0: not imporant, 1: very important
+*C_CS: Cummulative coevolution score calculated over all pairs for that residue $r_i$
+*C_SCS: Cummulative scaled (by mean) coevolution score calculated over all pairs for that residue $r_i$
+*C_J_Vec_x: Cummulative J score calculated over all pairs for that residue $r_i$, for the vector $x_i$
+
+```{r}
+
+file_residue_stats<-"path/to/the/file/filename.txt"
+
+res_stats_df<-read.csv(file_residue_stats,header=T)
+```
+
+#Heat map to visualise the coevolution matrix
+```{r}
+dynor_mat_heatmap(coevolution_matrix,"Plot title")
+```
+#Boxplot to visualise the spread of coevolution scores by residue
+```{r,fig.width=8}
+dynor_mat_boxplot(coevolution_matrix,"Plot title")
+```
+#Line plot to visualise the coevolution scores by residue, with residues having mean coevolution scores greater than the mean shown in red
+
+```{r}
+dynor_mat_impplot(coevolution_matrix,"Plot title")
+```
+
+#Visualising Eigenvector centrality by Residue ID
+```{r}
+barplot(res_stats_df$EVC,ylab="Eigenvector centrality",xlab="Residue ID")
+```
+
+#Setting all EVC and community ID which are -1 to NA
+```{r}
+res_stats_df$EVC[res_stats_df$EVC<0]=NA
+res_stats_df$CommunityID[res_stats_df$CommunityID<0]=NA
+```
+
+#Creating a table of memebership by community
+```{r}
+table_x<-table(res_stats_df$CommunityID)
+```
+
+#Visualising spread of EVC by community
+```{r}
+par(las=2)
+bx<-boxplot(EVC~CommunityID,data=res_stats_df,xlab="# Community ID",ylab="Eigenvector Centrality",ylim=c(-0.25,1),yaxt='n')
+text(x=as.integer(bx$names),y=-0.2,labels=as.vector(table_x),col="blue",cex=0.8)
+axis(2,seq(0,1,0.1))
+```
+#Membership of communities
+```{r}
+barplot(table(res_stats_df$CommunityID),ylim=c(0,20))
+```
