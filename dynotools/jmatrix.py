@@ -113,8 +113,15 @@ class JMatrix(object):
             self._dict_rho_data[i_key]=rho_values
         fileio.save_file(self._dict_params['file_jmat'],self._out_j)
     def _calc_j_score(self,scaled_coe,rho):
+        '''
+            calculate J-scores
+            threhold
+                    : Scaled-Scaled coevolution scores >0 
+                    : rho > rho-cutoff
+
+        '''
         jvalue=0.0; rho=np.abs(rho);
-        if(scaled_coe>=1)and(rho>=self._dict_params["rhocutoff"]):
+        if(scaled_coe>0)and(rho>=self._dict_params["rhocutoff"]):
             jvalue  =   self._dict_params["lambda"]*(scaled_coe)+(1-self._dict_params["lambda"])*rho;
         return jvalue
 
@@ -128,9 +135,16 @@ class JMatrix(object):
         self._logger.info('%-20s : %.2f'%('Maximum',self._max_c_score));
 
     def _calculate_scaled_matrix(self):
+        '''
+            calculate J-matrix 
+            scale coevolution scores by average and set any value less than 1 to 0
+            scale the scaled coevolution scores by Smax to set values between 0-1
+        '''
         self._scaled_matrix=self._matrix_coevolution;
         if(self._dict_params["scoe"]==True):
-            self._scaled_matrix=self._matrix_coevolution/np.average(self._matrix_coevolution)
+            _scaled_avg = self._matrix_coevolution/np.average(self._matrix_coevolution)
+            _scaled_max = np.where(_scaled_avg >=1, _scaled_avg, 0)
+            self._scaled_matrix=_scaled_max/np.max(_scaled_max)
 
 
     def manager(self,dict_params):

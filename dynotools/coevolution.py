@@ -53,7 +53,7 @@ class Coevolution(object):
         logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',datefmt='%m/%d/%Y %I:%M:%S %p',level=logging.INFO)
         self._logger=logging.getLogger('Dyno CoEv')
     
-    def run_hhblits(self):
+    def _run_hhblits(self):
         # find similar sequences using the uniprot database
         # generate sequence alignment
         # filter sequence alignment using hhfilter
@@ -85,7 +85,7 @@ class Coevolution(object):
         stop = timeit.default_timer()
         self._logger.info("%-15s : %12.2f(s)  (N_THREADS=%4d)\n"%("HHBLITS",stop-start,self._nthreads))
 
-    def run_ccmpred_gpu():
+    def _run_ccmpred_gpu(self):
         # run ccmpred on GPU using the alignment file from HHBLITS
         # output is a coevolution matrix file (.mat)
         start = timeit.default_timer()
@@ -155,9 +155,4 @@ class Coevolution(object):
             self._logger.info("Sequence from PDB and fasta file are a match. No issues. Phew!!!")
             # only for debugging purposes
             #self._object_sequence.compare_fasta_and_pdb_sequence(self._object_sequence.FASTA_SEQUENCE,self.pdb_sequence)
-
-
-
-
-
 
