@@ -249,7 +249,7 @@ def jmatrix():
 def networks():
     _usage_info="Extract networks from J-matrix:\n"
     _usage_info+="dyno_4_networks.py -h\n"
-    _usage_info+="e.g.: dyno_4_networks.py -j jmatrix.txt -m 0.8 -o label \n";
+    _usage_info+="e.g.: dyno_4_networks.py -j jmatrix.txt -q 0.8 -o label -v 4\n";
 
     parser = argp.ArgumentParser(prog                   =   "dyno_4_networks.py",
                                  usage="",description   =   _usage_info,
@@ -278,8 +278,8 @@ def networks():
                         );
 
     parser.add_argument("-v","--nvec",
-                        default=3,
-                        help="default column for network analysis 3. 2: Coevolution Score; 3: Scaled coevolution score; 4: J-score for vector 1; 5... "
+                        default=4,
+                        help="Pick the column for network analysis, default is 4. \n2: Coevolution Score; \n3: Scaled coevolution score; \n4: J-score for vector 1; \n5 onwards is J-score for vector 2 and so on... "
                         );
     parser.add_argument("-s",
                         "--nsteps",

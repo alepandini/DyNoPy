@@ -28,6 +28,9 @@ This package will help you generate:
 3. Pairwise residue contributions to functional motions
 4. Pairwise combined covevolution and dynamical score
 
+## **Data analysis and visualisation**
+Use the sample Jupyter notebooks in the jupyter/ folder for data visualisation and analysis
+
 #### **Requirements**
 	- Python3.6, numpy 1.15, matplotlib
 	- R & igraph
