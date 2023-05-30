@@ -172,7 +172,7 @@ class Networks(object):
             ("No. of Steps for Search",
              self._dict_params['nsteps']))
 
-        Q = 0 
+        self.Q = 0 
         _list_Q = []
         for i in _list_of_steps:
             _filtered_df = self._jmatrix_df[_choosen_vector > i]
@@ -181,18 +181,18 @@ class Networks(object):
                 _sliced_df, directed=False, vertices=None, use_vids=False)
             # igh.Graph.community_leading_eigenvector(_mygraph)
             _cle = _mygraph.community_leading_eigenvector()
-            Q = _cle.modularity
+            self.Q = _cle.modularity
             self._logger.info(
                 "%-20s (Q) : %4.2f (%4.2f)" %
-                ("Vector cut-off..", i, Q))
+                ("Vector cut-off..", i, self.Q))
 
-            if (_cle.modularity > self._dict_params['cut_mod']):
+            if self.Q > self._dict_params['cut_mod']:
                 self._logger.info("Desired Q, reached. Saving community graph")
-                # self._save_community_graph(_cle,_mygraph)
                 self._save_gml(_cle, _mygraph)
+                self.save_residue_stats()
                 break
-        self._logger.info(
-            "Desired Q could not be reached. Either lower your Q cut-off or change your vector.")
+        if self.Q < self._dict_params['cut_mod']:
+            self._logger.info("Desired Q could not be reached. Either lower your Q cut-off or change your vector.")
 
     def _save_gml(self, community_graph, _sub_graph):
         self.get_evc_scores(_sub_graph)
@@ -221,7 +221,7 @@ class Networks(object):
         _j_col=list(self._jmatrix_df.columns)[4:]
         #_new_j_col=[]
         _out=""
-        _out="Resid"+",EVC"+",CommunityID"+",C_CS,"+",C_SCS"
+        _out="Resid"+",CommunityID"+",EVC"+",C_CS,"+",C_SCS"
 
         for i in _j_col:
             #_col_names.append("C_"+i)
@@ -284,6 +284,6 @@ class Networks(object):
         self._get_jmatrix_data()
         self._process_to_graph()
         self._process_jmatrix()
-        self.save_residue_stats()
+        #self.save_residue_stats()
         _stop = timeit.default_timer()
         self._logger.info('%-20s : %.2f (s)' % ('FINISHED_IN', _stop - _start))

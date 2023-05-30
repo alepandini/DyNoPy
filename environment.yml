@@ -4,6 +4,7 @@ dependencies:
   - pip
   - pip:
     - numpy
+    - pandas
     - matplotlib
     - h5py
     - scikit-learn
