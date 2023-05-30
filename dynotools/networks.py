@@ -149,9 +149,9 @@ class Networks(object):
 
         _vec_i = self._dict_params['vec_num']
         _choosen_vector = self._jmatrix_df.iloc[:, _vec_i]
-
-        _vec_max = int(np.max(_choosen_vector))
-        _vec_min = int(np.min(_choosen_vector))
+        
+        _vec_max = np.max(_choosen_vector)
+        _vec_min = np.min(_choosen_vector)
 
         _vec_delta = (_vec_max - _vec_min) / self._dict_params['nsteps']
         _list_of_steps = np.arange(_vec_min, _vec_max + _vec_delta, _vec_delta)
@@ -171,9 +171,9 @@ class Networks(object):
             "%-20s : %4.2f" %
             ("No. of Steps for Search",
              self._dict_params['nsteps']))
-
         self.Q = 0 
         _list_Q = []
+        #rename i
         for i in _list_of_steps:
             _filtered_df = self._jmatrix_df[_choosen_vector > i]
             _sliced_df = _filtered_df.iloc[:, [0, 1, _vec_i]]
@@ -189,7 +189,7 @@ class Networks(object):
             if self.Q > self._dict_params['cut_mod']:
                 self._logger.info("Desired Q, reached. Saving community graph")
                 self._save_gml(_cle, _mygraph)
-                self.save_residue_stats()
+                self._save_residue_stats()
                 break
         if self.Q < self._dict_params['cut_mod']:
             self._logger.info("Desired Q could not be reached. Either lower your Q cut-off or change your vector.")
@@ -214,32 +214,45 @@ class Networks(object):
             _community_id += 1
         fileio.save_file(self._dict_params['file_evc'], _evc_out)
         igh.write(self.full_graph, self._dict_params['file_gml'])
-    def save_residue_stats(self):
+    def _save_residue_stats(self):
+        #get list of unique residues
         list_of_residue_ids=list(np.unique(self._jmatrix_df["Res_a"]))
 
         list_of_residue_ids.append(list(self._jmatrix_df["Res_b"])[-1])
+
         _j_col=list(self._jmatrix_df.columns)[4:]
         #_new_j_col=[]
         _out=""
-        _out="Resid"+",CommunityID"+",EVC"+",C_CS,"+",C_SCS"
+        _out="Resid"+",CommunityID"+",EVC"+",C_CS"+",C_SCS"
 
         for i in _j_col:
             #_col_names.append("C_"+i)
             _out+=",%s"%(i)
         _out+="\n"
+
         for resid in list_of_residue_ids:
             int_resid=self._get_int_residue_id(resid)
 
             _df_a=self._jmatrix_df[self._jmatrix_df["Res_a"]==resid]
             _df_b=self._jmatrix_df[self._jmatrix_df["Res_b"]==resid]
             _community_id=-1
-            _evc=-1.00
+
+            # setting default evc value to -1
+            _evc=-1
+
             if(resid in self._dict_resid_evc.keys()):
                 _community_id=self._dict_resid_evc[resid]
                 _evc=self._evc_dictionary[resid]
             _out+="%d,%d,%.5f"%(int_resid,_community_id,_evc)
 
             _res_stats=[]
+            '''
+                per residue calculate cummulative:
+                                    coevolution score
+                                    Scaled coevolution score
+                                    J-value (J can be > 1)
+                                    
+            '''
             #print(int_resid,len(_df_a),len(_df_b),_df_a.empty,_df_b.empty)
             if(_df_a.empty):
                 _res_stats=_df_b.sum(numeric_only=True)

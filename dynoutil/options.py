@@ -241,7 +241,7 @@ def jmatrix():
                         );
     parser.add_argument("--rhocutoff",
                         default=0.5,
-                        help="Cut-off for absolute rho values "
+                        help="Cut-off for absolute rho values; default is 0.5"
                         );
 
     args = parser.parse_args()
@@ -279,7 +279,7 @@ def networks():
 
     parser.add_argument("-v","--nvec",
                         default=3,
-                        help="default column for network analysis 3. [FULL SCAN NOT IMPLEMENTED]"
+                        help="default column for network analysis 3. 2: Coevolution Score; 3: Scaled coevolution score; 4: J-score for vector 1; 5... "
                         );
     parser.add_argument("-s",
                         "--nsteps",
