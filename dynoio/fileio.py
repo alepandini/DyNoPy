@@ -165,7 +165,11 @@ def read_data_to_matrix(fName,limit=999999999):
     return Array_Data
 def read_jmatrix(fName):
     fUtils.check_file(fName)
+    '''
+        Change this to csv reader
+    '''
     jdata=pd.read_fwf(fName)
+    #jdata=pd.read_table(fName,sep="\s+")
     return jdata
 def convert_df_col_to_str(dataframe,column_name="A"):
     return_list=[]

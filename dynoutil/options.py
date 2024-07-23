@@ -26,13 +26,15 @@
 import argparse as argp
 def opts_coevolution():
     _usage_info="Run coevolution analysis using hhblits and ccmpred"
-
+    _usage_info+="dyno_1_coevolution.py -h\n"
+    _usage_info+="e.g.: dyno_1_coevolution.py -f fasta_file -l label_of_outputfile -d uniprot_database -n number_of_threads\n";
+ 
     parser = argp.ArgumentParser(prog                   =   "dyno_1_coevolution.py",
                                  usage="",description   =   _usage_info,
                                  formatter_class        =   argp.RawTextHelpFormatter
                                  );
     parser = argp.ArgumentParser()
-    parser.add_argument("-p", "--pdb",help="pdb file")
+    #parser.add_argument("-p", "--pdb",help="pdb file")
     parser.add_argument("-f", "--fasta",help="fasta file")
     parser.add_argument("-l", "--label",help="Label for output files")
     parser.add_argument("-d", "--database",default="UniRef30_2020_02",help="uniprot database ; Supports only UniRef30_2020_02")
@@ -188,7 +190,7 @@ def resma():
     _usage_info="Extract the correlation matrix\n"
     _usage_info+="dyno_2_dmatrix.py -h\n"
     _usage_info+="e.g.: dyno_2_dmatrix.py -i iexvg -f 1 -l 10 -n 1 -e label_of_energy_files\n";
-    parser = argp.ArgumentParser(prog                   =   "dyno_matrix.py",
+    parser = argp.ArgumentParser(prog                   =   "dyno_2_matrix.py",
                                 usage                   =   "",
                                 description             =   _usage_info,
                                 formatter_class         =   argp.RawTextHelpFormatter
@@ -209,9 +211,9 @@ def resma():
 def jmatrix():
     _usage_info="Calculate the J-matrix:\n"
     _usage_info+="dyno_3_jmatrix.py -h\n"
-    _usage_info+="e.g.: dyno_matrix.py -c coevolution.mat -r rho.mat -l 0.5 -o label \n";
+    _usage_info+="e.g.: dyno_3_jmatrix.py -c coevolution.mat -r rho.mat -l 0.5 -o label \n";
 
-    parser = argp.ArgumentParser(prog                   =   "dyno_jmatrix.py",
+    parser = argp.ArgumentParser(prog                   =   "dyno_3_jmatrix.py",
                                  usage="",description   =   _usage_info,
                                  formatter_class        =   argp.RawTextHelpFormatter
                                  );
@@ -225,16 +227,14 @@ def jmatrix():
                         help="File with RHO matrix"
                         );
     parser.add_argument("-o","--out",
-                        default="J-Matrix.out",
-                        help="Output File with J-matrix"
-                        );
+                        default="J-Matrix",
+                        help="J-matrix output file label");
 
     parser.add_argument("-l","--dlambda",
                         default=0.5,
                         help="Set Lambda value, default is 0.5. [FULL SCAN NOT IMPLEMENTED]"
                         );
-    parser.add_argument("-s",
-                        "--scalescore",
+    parser.add_argument("--scalescore",
                         default=True,
                         action=argp.BooleanOptionalAction,
                         help="Scale coevolution scores with average and set scores less then average to zero"
@@ -243,7 +243,17 @@ def jmatrix():
                         default=0.5,
                         help="Cut-off for absolute rho values; default is 0.5"
                         );
-
+    parser.add_argument("--lambdascan",
+                        default=False,
+                        action=argp.BooleanOptionalAction,
+                        help="Scan lambda at dlambda intervals."
+                        );
+    parser.add_argument("--scanall",
+                        default=False,
+                        action=argp.BooleanOptionalAction,
+                        help="Scan all J-Vectors. By default it is off."
+                        );
+ 
     args = parser.parse_args()
     return args
 def networks():

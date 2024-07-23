@@ -108,6 +108,7 @@ class Networks(object):
 
     def _get_jmatrix_data(self):
         self._jmatrix_df = fileio.read_jmatrix(self._dict_params["file_jmat"])
+        #print(self._jmatrix_df['Res_b'])
         self._rename_residues()
 
     def _rename_residues(self):
@@ -126,7 +127,7 @@ class Networks(object):
         for x in self._jmatrix_df['Res_b']:
             temp.append(self._change_node_name(x))
         self._jmatrix_df['Res_b'] = temp
-
+        #print(self._jmatrix_df["Res_b"])
     def _process_to_graph(self):
         self.full_graph = igh.Graph.DataFrame(
             self._jmatrix_df, directed=False, use_vids=False)
@@ -144,15 +145,45 @@ class Networks(object):
             https://www.opentechguides.com/how-to/article/pandas/193/index-slice-subset.html
             https://igraph.org/python/tutorial/develop/tutorials/visualize_communities/visualize_communities.html
         '''
+        self._logger.info("Starting calculation of Communities from the network")
+        if(self._dict_params["scan_q"]==False):
+            self._process_full_network()
+        else:
+            self._modularity_based_scan()
 
+    def _process_full_network(self):
+        _vec_i = self._dict_params['vec_num']
+        _choosen_vector = self._jmatrix_df.iloc[:,_vec_i]
+        
+        self._logger.info("%-20s : %3d" %("Analysis vector", self._dict_params['vec_num']))
+        
+        _filtered_df = self._jmatrix_df[_choosen_vector > self._dict_params['vec_cutoff']]
+        print(_filtered_df)
+        exit()
+        _sliced_df = _filtered_df.iloc[:, [0, 1, _vec_i]]
+        _mygraph = igh.Graph.DataFrame(_sliced_df, directed=False, vertices=None, use_vids=False)
+        #print(_vec_i)
+        print(_mygraph.edge_attributes())
+        _vec_name = _mygraph.edge_attributes()[0]
+        #_vec_name = _mygraph.edge_attributes()[_vec_i]
+        
+        # igh.Graph.community_leading_eigenvector(_mygraph)
+        _cle = _mygraph.community_leading_eigenvector(weights=_mygraph.es[_vec_name])
+        self.Q = _cle.modularity
+        self._logger.info("%-20s (Q) : %4.2f (%4.2f)" %("Vector cut-off..", self._dict_params['vec_cutoff'], self.Q))
+        self._save_gml(_cle, _mygraph)
+        self._save_residue_stats(_filtered_df)
+
+    def _modularity_based_scan(self):
         self._vec_Q = []
 
         _vec_i = self._dict_params['vec_num']
         _choosen_vector = self._jmatrix_df.iloc[:, _vec_i]
-        
+        #print(self._jmatrix_df)
+        #print(_choosen_vector)
         _vec_max = np.max(_choosen_vector)
         _vec_min = np.min(_choosen_vector)
-
+        
         _vec_delta = (_vec_max - _vec_min) / self._dict_params['nsteps']
         _list_of_steps = np.arange(_vec_min, _vec_max + _vec_delta, _vec_delta)
         _cle = ""
@@ -214,12 +245,14 @@ class Networks(object):
             _community_id += 1
         fileio.save_file(self._dict_params['file_evc'], _evc_out)
         igh.write(self.full_graph, self._dict_params['file_gml'])
-    def _save_residue_stats(self):
+    def _save_residue_stats(self,filtered_df):
         #get list of unique residues
-        list_of_residue_ids=list(np.unique(self._jmatrix_df["Res_a"]))
-
-        list_of_residue_ids.append(list(self._jmatrix_df["Res_b"])[-1])
-
+        #list_of_residue_ids=list(np.unique(self._jmatrix_df["Res_a"]))
+        print(filtered_df["Res_b"])
+        list_of_residue_ids=list(set(list(filtered_df["Res_a"])+list(filtered_df["Res_b"])))
+        list_of_residue_ids.sort()
+        print(list_of_residue_ids)
+        exit()
         _j_col=list(self._jmatrix_df.columns)[4:]
         #_new_j_col=[]
         _out=""

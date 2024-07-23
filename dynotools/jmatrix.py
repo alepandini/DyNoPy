@@ -76,7 +76,6 @@ class JMatrix(object):
         self._logger.info('%-20s : %s'%('STORING','dynamics matrix...'))
         self._max_scaled_coe=np.max(self._scaled_matrix)
 
-        self._out_j="%12s%12s%12s%12s"%('Res_a','Res_b','Cab','Sab');
         #self._out_coe="%8s%8s%12s%12s%12s\n"%('Res_a','Res_b','Cab','Sab','Rab');
 
         #self._matrix_rho  =   fileio.read_matrix(self._dict_params['file_rho'])
@@ -84,14 +83,15 @@ class JMatrix(object):
 
     def _calculate_j_score(self):
         self._logger.info('%-20s'%('Calculating J-matrix....'))
-        self._logger.info("%-15s : %s"%("Lambda",self._dict_params['lambda']))
+        self._logger.info("%-15s : %s"%("Lambda",self._lambda_j))
         self._logger.info("%-15s : %s"%("Cut-off Rho",self._dict_params['rhocutoff']))
         self._logger.info("%-15s : %s"%("Scaling Coevolution",self._dict_params['scoe']))
-        self._logger.info("%-15s : %s"%("Output File",self._dict_params['file_jmat']))
-     
+
+        self._out_j="%s,%s,%s,%s"%('Res_a','Res_b','Cab','Sab');
+        self._dict_rho_data={}    
         count=1
         for i in (self._rho_data[0].split()[3:]):
-            self._out_j+="%12s"%("J_"+"Vec_"+"%d"%(count))
+            self._out_j+=",%s"%("J_"+"Vec_"+"%d"%(count))
             count+=1
         self._out_j+="\n"
 
@@ -103,26 +103,22 @@ class JMatrix(object):
             i_key="%d-%d"%(res1,res2)
             i_scoe=self._scaled_matrix[res1-1,res2-1]
             i_coe=self._matrix_coevolution[res1-1,res2-1]
-            self._out_j+="%12d%12d%12.2f%12.2f"%(res1,res2,i_coe,i_scoe)
+            self._out_j+="%d,%d,%.2f,%.2f"%(res1,res2,i_coe,i_scoe)
             rho_values=[];
             for j in range(2,len(line_data)):
                 j_rho=float(line_data[j])
-                self._out_j+="%12.2f"%(self._calc_j_score(i_scoe,j_rho))
-                rho_values.append(float(line_data[j]))
+                self._out_j+=",%.2f"%(self._calc_j_score(i_scoe,j_rho))
+                #rho_values.append(float(line_data[j]))
             self._out_j+="\n"
-            self._dict_rho_data[i_key]=rho_values
-        fileio.save_file(self._dict_params['file_jmat'],self._out_j)
+            #self._dict_rho_data[i_key]=rho_values
+        _file_name="%s-%2.2f.jmat"%(self._dict_params['file_jmat'],self._lambda_j)
+        self._logger.info("%-15s : %s"%("Output File",_file_name))  
+        fileio.save_file(_file_name,self._out_j)
+       
     def _calc_j_score(self,scaled_coe,rho):
-        '''
-            calculate J-scores
-            threhold
-                    : Scaled-Scaled coevolution scores >0 
-                    : rho > rho-cutoff
-
-        '''
         jvalue=0.0; rho=np.abs(rho);
-        if(scaled_coe>0)and(rho>=self._dict_params["rhocutoff"]):
-            jvalue  =   self._dict_params["lambda"]*(scaled_coe)+(1-self._dict_params["lambda"])*rho;
+        if(scaled_coe>=1)and(rho>=self._dict_params["rhocutoff"]):
+            jvalue  =   self._lambda_j*(scaled_coe)+(1-self._lambda_j)*rho;
         return jvalue
 
     def _coe_matrix_stats(self):    
@@ -135,25 +131,28 @@ class JMatrix(object):
         self._logger.info('%-20s : %.2f'%('Maximum',self._max_c_score));
 
     def _calculate_scaled_matrix(self):
-        '''
-            calculate J-matrix 
-            scale coevolution scores by average and set any value less than 1 to 0
-            scale the scaled coevolution scores by Smax to set values between 0-1
-        '''
         self._scaled_matrix=self._matrix_coevolution;
         if(self._dict_params["scoe"]==True):
-            _scaled_avg = self._matrix_coevolution/np.average(self._matrix_coevolution)
-            _scaled_max = np.where(_scaled_avg >=1, _scaled_avg, 0)
-            self._scaled_matrix=_scaled_max/np.max(_scaled_max)
+            self._scaled_matrix=self._matrix_coevolution/np.average(self._matrix_coevolution)
 
-
+    def _process_jscores(self):
+        if(self._dict_params["scanlambda"]==True):
+            list_lambda =   np.arange(0,1+self._dict_params['dlambda'],self._dict_params['dlambda'])
+            for dlambda in list_lambda:
+                print(dlambda)
+                self._lambda_j=dlambda
+                
+                self._calculate_j_score()
+        else:
+            self._lambda_j = self._dict_params['dlambda']
+            self._calculate_j_score()
+            
     def manager(self,dict_params):
         _start   =   timeit.default_timer();
         
         self._dict_params   =   dict_params;
-
-        self._get_coev_matrix();
-        self._get_rho_matrix();
-        self._calculate_j_score()
-        _stop    =   timeit.default_timer();
+        self._get_coev_matrix()
+        self._get_rho_matrix()
+        self._process_jscores()
+        _stop    =   timeit.default_timer()
         self._logger.info('%-20s : %.2f (s)'%('FINISHED_IN',_stop-_start));

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.9
 '''
     @release_date  : $release_date
     @version       : $release_version
@@ -52,11 +52,12 @@ def main():
     dict_params['file_coe'] = args.coe
     dict_params['file_rho'] = args.rho
     dict_params['file_jmat'] = args.out
-    dict_params['lambda'] = float(args.dlambda)
+    dict_params['dlambda'] = float(args.dlambda)
     dict_params['scoe'] = args.scalescore
     dict_params['rhocutoff'] = float(args.rhocutoff)
+    dict_params['scanlambda'] = args.lambdascan
+    #dict_params['scanall'] = args.scanall
     object_jma = JMatrix()
     object_jma.manager(dict_params)
-
 
 main()
