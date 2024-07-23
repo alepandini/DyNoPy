@@ -43,7 +43,7 @@ def main():
     initiate_logging()
     args = argParser.opts_coevolution()
     object_coevolution = Coevolution()
-    object_coevolution.generate_residue_dictionary(args)
+    #object_coevolution.generate_residue_dictionary(args)
     object_coevolution.run_coevolution(args)
 
 main()

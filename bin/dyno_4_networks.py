@@ -59,7 +59,7 @@ def main():
     dict_params['file_stats'] = args.fstats
     dict_params['scan_q'] = False
     dict_params['vec_cutoff'] =  0.0
-
+    dict_params['npairs'] = 10
     object_netw = Networks()
     object_netw.manager(dict_params)
 

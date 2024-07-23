@@ -100,7 +100,7 @@ class JMatrix(object):
             line_data=self._rho_data[i].strip().split()
             res1=int(line_data[0]); res2=int(line_data[1])
 
-            i_key="%d-%d"%(res1,res2)
+            #i_key="%d-%d"%(res1,res2)
             i_scoe=self._scaled_matrix[res1-1,res2-1]
             i_coe=self._matrix_coevolution[res1-1,res2-1]
             self._out_j+="%d,%d,%.2f,%.2f"%(res1,res2,i_coe,i_scoe)

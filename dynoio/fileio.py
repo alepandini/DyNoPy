@@ -168,7 +168,7 @@ def read_jmatrix(fName):
     '''
         Change this to csv reader
     '''
-    jdata=pd.read_fwf(fName)
+    jdata=pd.read_csv(fName,index_col=False)
     #jdata=pd.read_table(fName,sep="\s+")
     return jdata
 def convert_df_col_to_str(dataframe,column_name="A"):

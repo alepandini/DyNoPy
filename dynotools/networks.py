@@ -154,19 +154,20 @@ class Networks(object):
     def _process_full_network(self):
         _vec_i = self._dict_params['vec_num']
         _choosen_vector = self._jmatrix_df.iloc[:,_vec_i]
-        
+        #print(_choosen_vector)
         self._logger.info("%-20s : %3d" %("Analysis vector", self._dict_params['vec_num']))
         
         _filtered_df = self._jmatrix_df[_choosen_vector > self._dict_params['vec_cutoff']]
-        print(_filtered_df)
-        exit()
+        #print(_filtered_df)
+        if(len(_filtered_df)<self._dict_params['npairs']):
+            print("Exiting. Not enough meangingful pairs for Community analysis")
+            exit()
         _sliced_df = _filtered_df.iloc[:, [0, 1, _vec_i]]
         _mygraph = igh.Graph.DataFrame(_sliced_df, directed=False, vertices=None, use_vids=False)
         #print(_vec_i)
-        print(_mygraph.edge_attributes())
+        #print(_mygraph.edge_attributes())
         _vec_name = _mygraph.edge_attributes()[0]
         #_vec_name = _mygraph.edge_attributes()[_vec_i]
-        
         # igh.Graph.community_leading_eigenvector(_mygraph)
         _cle = _mygraph.community_leading_eigenvector(weights=_mygraph.es[_vec_name])
         self.Q = _cle.modularity
@@ -179,8 +180,6 @@ class Networks(object):
 
         _vec_i = self._dict_params['vec_num']
         _choosen_vector = self._jmatrix_df.iloc[:, _vec_i]
-        #print(self._jmatrix_df)
-        #print(_choosen_vector)
         _vec_max = np.max(_choosen_vector)
         _vec_min = np.min(_choosen_vector)
         
@@ -232,27 +231,26 @@ class Networks(object):
         num_communities = np.max(community_graph.membership)
         _community_id = 1
         _evc_out = "%15s%15s%15s\n" % ("residue_id", "community_id", "evc")
-
+        
         for _subgraph in community_graph.subgraphs():
             list_of_node_names = _subgraph.vs["name"]
             for _node_name in list_of_node_names:
                 _node_index = self._dict_node_index[_node_name]
                 self.full_graph.vs[_node_index]["community_id"] = _community_id
+                _subgraph.vs
                 _evc_out += "%15d%15d%15.5f\n" % (self._get_int_residue_id(
                     _node_name), _community_id, self._evc_dictionary[_node_name])
                 self._dict_resid_evc[_node_name] = _community_id
-
+                _comm_gml_file_name="%s-%d-%s"%("Community",_community_id,self._dict_params['file_gml'])
+                igh.write(_subgraph,_comm_gml_file_name)
             _community_id += 1
         fileio.save_file(self._dict_params['file_evc'], _evc_out)
-        igh.write(self.full_graph, self._dict_params['file_gml'])
+        igh.write(self.full_graph,self._dict_params['file_gml'])
     def _save_residue_stats(self,filtered_df):
         #get list of unique residues
         #list_of_residue_ids=list(np.unique(self._jmatrix_df["Res_a"]))
-        print(filtered_df["Res_b"])
         list_of_residue_ids=list(set(list(filtered_df["Res_a"])+list(filtered_df["Res_b"])))
         list_of_residue_ids.sort()
-        print(list_of_residue_ids)
-        exit()
         _j_col=list(self._jmatrix_df.columns)[4:]
         #_new_j_col=[]
         _out=""
