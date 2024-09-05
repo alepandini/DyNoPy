@@ -1,44 +1,51 @@
-# mjolnir
-
-Pipeline tools
-
-Link to uniprot databases
-	- http://gwdu111.gwdg.de/~compbiol/uniclust/2022_02/
-
-Sequence alignment
-- hhsuite https://github.com/soedinglab/hh-suite
-
-Coevolution matrix
-- ccmpred https://github.com/soedinglab/CCMpred
-- metapsicov https://github.com/psipred/metapsicov
-- plmDCA https://github.com/pagnani/PlmDCA
-
-Secondary structure calculation
-
-PsiPRED:
-- https://github.com/psipred/psipred
-
 # DyNoPy (Dynamics based Network cOmparisons in Python)
 
+Welcome to DyNoPy!!!!
+
+DyNoPy, for your favourite protein, will allow you to combine coevolution matrix with data from Molecular Dynamics (MD) simulations to find important residues that might be contributing to function.
+
+So before you start you need the following:
+
+Input files:
+1. PDB file used for MD simulation, residue numbering, atom count should match the trajectory file.
+2. Trajectory file, no. of atoms shoul match the PDB file.
+3. FASTA sequence, should match the length and sequence in the pdb file
+
+... and most importantly DyNoPy installed on your workhorse server/PC along with the dependency softwares listed below.
 
 ## **What does it do?**
 This package will help you generate:
 1. Coevolution matrices from FASTA sequences
-2. Pairwise non-bonded interaction energies from MD trajectories 
+2. Pairwise non-bonded interaction energies from MD trajectories
 3. Pairwise residue contributions to functional motions
 4. Pairwise combined covevolution and dynamical score
 
 ## **Data analysis and visualisation**
 Use the sample Jupyter notebooks in the jupyter/ folder for data visualisation and analysis
 
-#### **Requirements**
-	- Python3.6, numpy 1.15, matplotlib
-	- R & igraph
-        - ambertools18
-        - hh-suite
-	- CCMpred
+---
+
+## How to Install
+
+Below is the list of softwares and the database required to run DyNoPy. install.sh script will do the work for you, but if you are interested in the details, you can find them below:
+
+Please download the latest version of uniclust database:
+Link to [uniprot databases](http://gwdu111.gwdg.de/~compbiol/uniclust/)
+
+Sequence alignment
+- [hhsuite](https://github.com/soedinglab/hh-suite)
+Coevolution matrix (any would be fine, we recommend CCMpred for its speed and accuracy)
+- [CCMpred](https://github.com/soedinglab/CCMpred)
+- [Metapsicov](https://github.com/psipred/metapsicov)
+- [plmDCA](https://github.com/pagnani/PlmDCA)
+- [ambertools](https://ambermd.org/AmberTools.php)
+---
+
+#### **Python requirements**
+- Python3.6, numpy 1.15, matplotlib
+- R & igraph
 	
-## **Installation instructions**
+### **Installation instructions**
 
 Download the code to your favourite directory
 ```
@@ -83,41 +90,4 @@ export AMBERHOME="/home/username/myfavdir/amber/amber18"
 export PATH="$PATH:$AMBERHOME/bin"
 ```
 
-## **Developer area**
-
-### **Progress**
-	- Convert tools to wrappers for class calls
-	- Clean up the code
-- **Co-evolution analysis**
-    - *Features to add*
-       - [ ] check for ccmpred/hhblits libraries
-- **RIE**
-    - *Features to add*
-       - [ ] check for ambertools
-- **Dependency files**
-    - [ ] mdp files
-    - [ ] R scripts
-### GitHub cheat sheet
-Some tips and tricks of GitHub
-
-##### Configure git 
-```
-git config --global user.name "Name"
-git config --global user.email "email id"
-git config --global core.editor "vim"
-```
-#### Setting up the project 
-```
-mkdir DyNoPy
-cd DyNoPy/
-git init
-git remote add DyNoPy git@github.com:alepandini/DyNoPy.git
-#check if it is setup properly
-git remote -v
-git pull DyNoPy master
-```
-
-##### add+commit+push
-```
-cd DyNoPy && git add . && git commit && git push DyNoPy master
-```
+Now that you have installed DyNoPy, head to [tutorials](https://github.com/alepandini/DyNoPy/wiki) on how to use DyNoPy.
